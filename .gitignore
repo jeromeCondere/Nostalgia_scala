@@ -1,0 +1,11 @@
+target/
+project/target/
+*#
+*~
+.project
+.c*
+/bin/
+.settings/
+src/main/scala/Main.scala
+*.jar
+*.nlogo
