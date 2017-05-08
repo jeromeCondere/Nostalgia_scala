@@ -5,7 +5,7 @@ import scala.reflect.ClassTag
 
 abstract class NostalgiaAgent extends Actor {
   /**Move the agent on another place on the network and return the ref
-   *  of the new location
+   * of the new location
    * */
   def move: ActorRef
   /**Emit new agent*/
