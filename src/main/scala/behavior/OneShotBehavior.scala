@@ -1,8 +1,8 @@
 package behavior
+import akka.actor.ActorRef
 
 /**
- * OneShotBehavior <b
-import behavior.AbstractBehaviorr>
+ * OneShotBehavior <br>
  * A behavior that run only once and when finished send a Finished message to its supervisor
  * 
  * @constructor 

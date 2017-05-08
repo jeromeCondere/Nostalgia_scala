@@ -1,7 +1,8 @@
 package behavior
 import akka.actor.ActorRef
 import akka.actor.FSM
-import akka.actor.actorRef2Scala
+import akka.actor.Actor
+import akka.actor.PoisonPill
 sealed trait BehaviorMessage
 //message types
 sealed trait RequestMessage extends BehaviorMessage

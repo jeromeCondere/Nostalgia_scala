@@ -1,8 +1,6 @@
 package behavior
 import scala.concurrent.duration._
-import akka.actor.actorRef2Scala
-import behavior.FinishedRun
-import behavior.AbstractBehavior
+import akka.actor.ActorRef
 
 /**
  * TickerBehavior <br>

@@ -1,30 +1,9 @@
 package behavior
-
+import akka.actor.ActorRef
 import akka.actor.Props
 import proxy.BehaviorProxy
-import scala.reflect.ClassTag
+import scala.reflect.ClassTag 
 import scala.reflect._
-import akka.actor.actorRef2Scala
-import behavior.Setup
-
-import behavior.Run
-
-import behavior.Poke
-
-import behavior.FinishedRun
-
-import behavior.Finished
-
-import behavior.Ended
-
-import behavior.ComplexRunning
-
-import behavior.ComplexRun
-
-import behavior.AbstractBehavior
-
-import behavior.ComplexBehavior
-
 /**
  * ParralelBehavior	 <br>
  * A behavior that runs a list of behaviors asynchronously
