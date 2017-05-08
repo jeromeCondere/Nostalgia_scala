@@ -1,4 +1,4 @@
-name := "nostalgia"
+name := "nostalgia_scala"
 
 version := "0.0.1"
 
