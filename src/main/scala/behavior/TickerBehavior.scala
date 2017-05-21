@@ -1,6 +1,7 @@
 package behavior
 import scala.concurrent.duration._
 import akka.actor.ActorRef
+import akka.actor.Props
 
 /**
  * TickerBehavior <br>
@@ -39,4 +40,5 @@ class TickerBehavior (period:FiniteDuration)(toRun:() => Unit) extends  Abstract
 
 object TickerBehavior {
   def apply(delay:FiniteDuration)(toRun: =>Unit) = new TickerBehavior(delay)(()=> toRun)
+  def props(delay:FiniteDuration)(toRun: =>Unit): Props = Props(TickerBehavior(delay)(toRun))
 }

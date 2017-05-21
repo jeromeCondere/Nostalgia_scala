@@ -1,5 +1,6 @@
 package behavior
 import akka.actor.ActorRef
+import akka.actor.Props
 
 /**
  * OneShotBehavior <br>
@@ -16,4 +17,5 @@ class OneShotBehavior(toRun:() =>Unit) extends AbstractBehavior(toRun) {
 /** One shot behavior object (A behavior that run only once)*/
 object OneShotBehavior {
   def apply(toRun: =>Unit) = new OneShotBehavior(() => toRun)
+  def props(toRun: =>Unit): Props = Props(new OneShotBehavior(() => toRun))
 }

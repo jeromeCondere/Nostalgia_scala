@@ -20,9 +20,10 @@ class TimerBehavior(delay:FiniteDuration)(toRun:() => Unit) extends AbstractBeha
     system.scheduler.scheduleOnce(delay){ 
       toRun() 
       self ! FinishedRun
-      } 
+    } 
   }
 }
 object TimerBehavior {
   def apply(delay:FiniteDuration)(toRun: =>Unit) = new TimerBehavior(delay)(()=> toRun)
+  def props(delay:FiniteDuration)(toRun: =>Unit) = TimerBehavior(delay)(toRun)
 }
