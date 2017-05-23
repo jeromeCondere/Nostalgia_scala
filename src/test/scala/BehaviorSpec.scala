@@ -135,8 +135,8 @@ implicit val systemSupervisor = self
       override protected def init = a2+=3
     }
   
-    val bp1 = BehaviorProxy[OneShotBehavior]{new MyBehavior(doNothing())}
-    val bp2 = BehaviorProxy[OneShotBehavior]{new MyBehaviorBis(doNothing())}
+    val bp1 = BehaviorProxy{new MyBehavior(doNothing())}
+    val bp2 = BehaviorProxy{new MyBehaviorBis(doNothing())}
     val listBp = List(bp1,bp2)
     var beRef = TestActorRef(new ParralelBehavior(listBp),"parrallelBehavior")
     

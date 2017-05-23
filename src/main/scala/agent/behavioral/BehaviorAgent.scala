@@ -29,7 +29,7 @@ abstract class BehaviorAgent extends NostalgiaAgent with FSM[BehaviorAgentState,
   val behaviorsProxyList: ArrayBuffer[BehaviorProxy[AbstractBehavior]]
   
   final def addBehavior[A <: AbstractBehavior : ClassTag](behaviorProxy: BehaviorProxy[A]) = {
-    //behaviorsProxyList+= behaviorProxy
+    behaviorsProxyList+= behaviorProxy
   }
   
   def setup = {
