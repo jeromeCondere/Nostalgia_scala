@@ -22,6 +22,7 @@ case object Setup extends BehaviorAgentMessage
 case object Run extends BehaviorAgentState
 case object Next extends BehaviorAgentState
 case object End extends BehaviorAgentState
+case object Finished extends BehaviorAgentState
 
 trait Behavioral extends FSM[BehaviorAgentState,Int]{
   val behaviors: ArrayBuffer[ActorRef] = ArrayBuffer.empty
@@ -71,7 +72,8 @@ trait Behavioral extends FSM[BehaviorAgentState,Int]{
   
   when (Ended)
   {
-     case  Event(End, _) => stop()
+     case  Event(End, _) => context.parent ! Finished
+                            stop()
   }
   
 }

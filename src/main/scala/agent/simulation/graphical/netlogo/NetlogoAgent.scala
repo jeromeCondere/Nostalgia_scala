@@ -22,7 +22,8 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000) ex
   
   final def wait(block: => Unit) {
     java.awt.EventQueue.invokeAndWait(
-    new Runnable() { def run() { block } } ) 
+      new Runnable() { def run() { block } } 
+    ) 
   }
   
 }
