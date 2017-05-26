@@ -2,7 +2,8 @@ package agent.simulation.graphical.netlogo
 import agent.simulation.graphical.GraphicalAgent
 import org.nlogo.lite.InterfaceComponent
 
-abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000) extends GraphicalAgent(netlogoModel) {
+/**A class used to create a classic netlogoAgent that run the model nlogo file*/
+abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(val fps: Int = 30) extends GraphicalAgent(netlogoModel) {
   protected  val frame = new javax.swing.JFrame
   protected  val comp = new InterfaceComponent(frame)
   
