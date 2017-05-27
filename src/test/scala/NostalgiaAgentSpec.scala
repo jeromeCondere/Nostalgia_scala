@@ -2,9 +2,11 @@ import org.scalatest._
 import behavior.OneShotBehavior
 import behavior.proxy.BehaviorProxy
 import agent.behavioral._
+import agent.Simple
 import akka.actor._
 import akka.testkit._
 import scala.concurrent.duration._
+import scala.concurrent.Future;
 
 class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
@@ -16,7 +18,7 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
   }
   "A behaviorAgent" must {
     "execute correctly (OneShotBehavior)" in {
-        class MyBehaviorAgent extends BehaviorAgent {
+        class MyBehaviorAgent extends BehaviorAgent with Simple {
             var a = 2
             addBehavior(BehaviorProxy(OneShotBehavior{
               a+=2
@@ -26,9 +28,7 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
               a+=4
             }))
             
-            override def move = self
-            override def collide(a : ActorRef) = self
-            override def emit = Some(self)
+            
          }
       
         val nasRef = TestActorRef (new MyBehaviorAgent(), "myBehavior")
