@@ -1,5 +1,6 @@
 package agent
 import akka.actor.ActorRef
+import akka.actor.Actor
 import scala.collection.mutable.Map
 sealed trait Port
 /**self << actor*/
@@ -18,7 +19,7 @@ case class PortInput(val name: String, var actorList: List[ActorRef])
  * if a PortMessage is received by an actorRef we check if the actor is allowed to send on <br>
  * this port
  * */
-trait PortDevice {
+trait PortDevice extends Actor{
   val inPorts: Map[String, List[ActorRef]] = Map.empty
   val outPorts: Map[String, List[ActorRef]] = Map.empty
   
@@ -35,6 +36,41 @@ trait PortDevice {
     inPorts.get(out.portName) match {
       case None => inPorts += (out.portName -> List(out.actor) )
       case Some(listActor) => inPorts(out.portName) = out.actor::listActor
+    }
+  }
+  
+  /**Check if an actor is allowed to send a message on a port(in)*/
+  def isIn(sender: ActorRef, portName: String): Boolean = {
+    inPorts.get(portName) match {
+      case None => false //TODO send exception
+      case Some(listActor) => listActor.contains(sender)
+    }
+  }
+  
+  /**Check if an actor (receiver) will receive the message sent on the port(out)*/
+  def isOut(receiver: ActorRef, portName: String): Boolean = {
+    outPorts.get(portName) match {
+      case None => false //TODO send exception
+      case Some(listActor) => listActor.contains(receiver)
+    }
+  }
+    
+  override final def receive = {
+    case PortMessage(message, portName)  => if(isIn(sender, portName))
+                                               portReceive(message, portName)
+    case in: In => this +< in
+    case out: Out => this +> out
+    case x: Any => normalReceive(x)
+  }
+  /**receive method for message that are not sent on a port*/
+  def normalReceive(x: Any)
+  /**receive method for message that are sent on a port*/
+  def portReceive(message: Any, portName: String)
+  /**send method for message associated with an port(out)*/
+  final def portSend(message: Any, portName: String) = {
+    outPorts.get(portName) match {
+      case None => ???
+      case Some(listActor) => listActor.foreach { actor => actor ! PortMessage(message, portName) }
     }
   }
   
