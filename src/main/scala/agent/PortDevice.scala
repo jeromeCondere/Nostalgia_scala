@@ -35,8 +35,8 @@ trait PortDevice extends Actor{
   
   /**add an actor to a port(Out)*/
   def +> (out: Out) = {
-    inPorts.get(out.outPort) match {
-      case None => inPorts += (out.outPort -> Set((out.actor,out.inPort)) )
+    outPorts.get(out.outPort) match {
+      case None => outPorts += (out.outPort -> Set((out.actor,out.inPort)) )
       case Some(listActor) => inPorts(out.outPort) = listActor + ((out.actor, out.inPort))
     }
   }
