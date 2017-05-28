@@ -3,12 +3,14 @@ import akka.actor.ActorRef
 import akka.actor.Actor
 import scala.collection.mutable.Map
 sealed trait Port
-/**self << actor*/
-case class In(actor: ActorRef, portName: String) extends Port
-/**self >> actor*/
-case class Out(actor: ActorRef, portName: String) extends Port
+/**(self, in) << (actor,out)*/
+case class In(actor: ActorRef, inPort: String, outPort: String) extends Port
+/**(self,out) >> (actor, in)*/
+case class Out(actor: ActorRef, outPort: String, inPort: String) extends Port
 
-case class PortMessage(message: Any, portName: String)
+case class PortMessage(message: Any, outPort: String, inPort: String)
+case class IsIn(in: In)
+case class IsOut(out: Out)
 
 case class PortInput(val name: String, var actorList: List[ActorRef])
 
@@ -20,46 +22,48 @@ case class PortInput(val name: String, var actorList: List[ActorRef])
  * this port
  * */
 trait PortDevice extends Actor{
-  val inPorts: Map[String, List[ActorRef]] = Map.empty
-  val outPorts: Map[String, List[ActorRef]] = Map.empty
+  val inPorts: Map[String, Set[(ActorRef, String)]] = Map.empty
+  val outPorts: Map[String, Set[(ActorRef, String)]] = Map.empty
   
   /**add an actor to a port(In)*/
   def +< (in: In) = {
-    inPorts.get(in.portName) match {
-      case None => inPorts += (in.portName -> List(in.actor) )
-      case Some(listActor) => inPorts(in.portName) = in.actor::listActor
+    inPorts.get(in.inPort) match {
+      case None => inPorts += (in.inPort -> Set((in.actor,in.outPort)) )
+      case Some(listActor) => inPorts(in.inPort) = listActor + ((in.actor, in.outPort))
     }
   }
   
   /**add an actor to a port(Out)*/
   def +> (out: Out) = {
-    inPorts.get(out.portName) match {
-      case None => inPorts += (out.portName -> List(out.actor) )
-      case Some(listActor) => inPorts(out.portName) = out.actor::listActor
+    inPorts.get(out.outPort) match {
+      case None => inPorts += (out.outPort -> Set((out.actor,out.inPort)) )
+      case Some(listActor) => inPorts(out.outPort) = listActor + ((out.actor, out.inPort))
     }
   }
   
   /**Check if an actor is allowed to send a message on a port(in)*/
-  def isIn(sender: ActorRef, portName: String): Boolean = {
-    inPorts.get(portName) match {
+  def isIn(in: In): Boolean = {
+    inPorts.get(in.inPort) match {
       case None => false //TODO send exception
-      case Some(listActor) => listActor.contains(sender)
+      case Some(listActor) => listActor.contains((in.actor, in.outPort))
     }
   }
   
   /**Check if an actor (receiver) will receive the message sent on the port(out)*/
-  def isOut(receiver: ActorRef, portName: String): Boolean = {
-    outPorts.get(portName) match {
+  def isOut(out: Out): Boolean = {
+    outPorts.get(out.outPort) match {
       case None => false //TODO send exception
-      case Some(listActor) => listActor.contains(receiver)
+      case Some(listActor) => listActor.contains((out.actor, out.inPort))
     }
   }
     
   override final def receive = {
-    case PortMessage(message, portName)  => if(isIn(sender, portName))
-                                               portReceive(message, portName)
+    case PortMessage(message, outPort, inPort)  => if(isIn(In(sender, inPort, outPort )))
+                                                      portReceive(message, inPort)
     case in: In => this +< in
     case out: Out => this +> out
+    case IsIn(in) => sender ! isIn(in)
+    case IsOut(out) => sender ! isOut(out)
     case x: Any => normalReceive(x)
   }
   /**receive method for message that are not sent on a port*/
@@ -70,7 +74,7 @@ trait PortDevice extends Actor{
   final def portSend(message: Any, portName: String) = {
     outPorts.get(portName) match {
       case None => ???
-      case Some(listActor) => listActor.foreach { actor => actor ! PortMessage(message, portName) }
+      case Some(listActor) => listActor.foreach { case (actor, inPort) => actor ! PortMessage(message, portName, inPort) }
     }
   }
   
