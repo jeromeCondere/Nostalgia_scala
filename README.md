@@ -8,7 +8,7 @@ autonomous and that interacts with its environment which can be the OS or other 
 . In that case we can call them autonomous sensor.  
 We use *akka*  which is framework implemented in scala that helps us to implement a MAS for the Nostalgia project.
 
-###the main goal
+### the main goal
 
 The main goal of Nostalgia is to provide tools for multi modeling in order to develop multi modeling systems easier.
 Multi modeling can be very useful because it consists in letting several agents called model agents interact. They run programs
@@ -19,7 +19,7 @@ Nostalgia use is specialized on multi modeling based on *Netlogo* (https://ccl.n
 ### other goal
 
 Another goal of nostalgia is to implement tools for DAI (distributed artificial intelligence) especially with
-neural networks.
+neural networks.  
 
 ## future work
 Developping tools for data farming
