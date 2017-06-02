@@ -1,5 +1,18 @@
 package agent.simulation.graphical.netlogo
 import agent.simulation.graphical.GraphicalAgent
+import agent.behavioral.BehaviorAgent
+import agent.behavioral.Run
+import agent.behavioral.Setup
+import agent.Simple
+import behavior.OneShotBehavior
+import behavior.TickerBehavior
+import behavior.ParralelBehavior
+import behavior.proxy.BehaviorProxy
+import scala.concurrent.duration._
+import akka.actor.ActorRef
+import akka.actor.Props
+import akka.pattern.ask
+
 import org.nlogo.lite.InterfaceComponent
 
 /**A class used to create a classic netlogoAgent that run the model nlogo file*/
@@ -10,9 +23,11 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   final def cmd(cmdString: String) = comp.command(cmdString)
   final def report(reportString: String) = comp.report(reportString)
   
-  final def run = {
+  //TODO on doit avoir des behaviors
+  // 1 pour run et 1 pour les output
+  final def runNetlogo = {
     wait {
-      frame.setSize(netlogoModel.params.dim._1, netlogoModel.params.dim._1)
+      frame.setSize(netlogoModel.params.dim._1, netlogoModel.params.dim._2)
       frame.add(comp)
       frame.setVisible(true)
       comp.open(netlogoModel.path)
@@ -26,5 +41,49 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
       new Runnable() { def run() { block } } 
     ) 
   }
+  
+  final def run = {
+   val behaviorAgent = context.actorOf(Props(new NostalgiaBehaviorAgent()))
+   behaviorAgent ! Setup
+   
+   //TODO add treatment when receiving Finished message
+   behaviorAgent ! Run
+   
+  }
+  /**setup function before running the netlogo model*/
+  def setup = ???
+  
+  /**this function is called repeatedly to check netlogo event with report and <br>
+   * send them to another netlogo agent
+   * */
+  def check = ???
+  
+  // a netlogo agent uses a behavior agent in order to run both runNetlogo and check
+  class NostalgiaBehaviorAgent extends BehaviorAgent with Simple {
+    var tick = 0
+    
+      class NostalgiaTickerBehavior(period:FiniteDuration)(toRun:() =>Unit) extends TickerBehavior(period:FiniteDuration)(toRun)
+      {
+        override protected def stopTicker: Boolean = {
+          tick > maxTicks
+        }
+      }
+    
+      addBehavior(BehaviorProxy(OneShotBehavior{
+        setup
+      }))
+      
+      val bpCheck = BehaviorProxy(new NostalgiaTickerBehavior((1/fps) seconds)(()=> {
+        tick+=1
+        check
+      }))
+      
+      val bpRunNetlogo = BehaviorProxy(OneShotBehavior{
+        runNetlogo
+      })
+      
+      val listBp = List(bpRunNetlogo, bpCheck)
+      addBehavior(BehaviorProxy(ParralelBehavior(listBp)))
+   }
   
 }

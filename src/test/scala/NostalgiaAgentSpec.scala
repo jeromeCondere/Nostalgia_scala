@@ -18,6 +18,7 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
   }
   "A behaviorAgent" must {
     "execute correctly (OneShotBehavior)" in {
+      import agent.behavioral._
         class MyBehaviorAgent extends BehaviorAgent with Simple {
             var a = 2
             addBehavior(BehaviorProxy(OneShotBehavior{
@@ -34,6 +35,7 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
         nasRef ! Setup
         nasRef ! Run
         awaitCond(nas.a == 8, 70 millis)
+        expectMsg(Finished)
       }
     "execute correctly (TimerBehavior)" in {
       fail

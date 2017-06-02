@@ -59,4 +59,5 @@ class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[
 /** ParralelBehavior (a behavior that runs a list of behaviors asynchronously)*/
 object ParralelBehavior {
   def apply[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[BehaviorProxy[A]]) = new ParralelBehavior(behaviorProxyList)
+  def props[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[BehaviorProxy[A]]): Props = Props(ParralelBehavior(behaviorProxyList))
 }
