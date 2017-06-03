@@ -8,7 +8,7 @@ case class In(actor: ActorRef, inPort: String, outPort: String) extends Port
 /**(self,out) >> (actor, in)*/
 case class Out(actor: ActorRef, outPort: String, inPort: String) extends Port
 
-case class PortMessage(message: Any, outPort: String, inPort: String)
+case class PortMessage(message: Any, outPort: String, inPort: String) extends InformMessage
 case class IsIn(in: In)
 case class IsOut(out: Out)
 

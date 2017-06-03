@@ -19,8 +19,8 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
   "A behaviorAgent" must {
     "execute correctly (OneShotBehavior)" in {
       import agent.behavioral._
+      var a = 2
         class MyBehaviorAgent extends BehaviorAgent with Simple {
-            var a = 2
             addBehavior(BehaviorProxy(OneShotBehavior{
               a+=2
             }))
@@ -29,13 +29,26 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
               a+=4
             }))
          }
-      
-        val nasRef = TestActorRef (new MyBehaviorAgent(), "myBehavior")
-        val nas = nasRef.underlyingActor
-        nasRef ! Setup
-        nasRef ! Run
-        awaitCond(nas.a == 8, 70 millis)
-        expectMsg(Finished)
+       val testSelf = self
+       class MyParent extends Actor {
+         val behaviorAgent = context.actorOf(Props(new MyBehaviorAgent()), "myBehaviorAgent")
+         context.watch(behaviorAgent)
+         var probe: ActorRef = _
+         
+         def receive = {
+           case probe: ActorRef => this.probe = probe
+           case "run" => behaviorAgent.tell(Setup, self)
+                         behaviorAgent.tell(Run, self)
+           case Finished => probe.tell(Finished, self)
+         }
+       }
+       
+        val parentRef = system.actorOf(Props(new MyParent()), "myParent")
+        val probe = TestProbe("probe")
+        parentRef ! probe.ref
+        parentRef ! "run"
+        awaitCond(a == 8, 70 millis)
+        probe.expectMsg(3 seconds, Finished)
       }
     "execute correctly (TimerBehavior)" in {
       fail

@@ -3,6 +3,7 @@ import scala.collection.mutable.ArrayBuffer
 import behavior.proxy._
 
 import agent.NostalgiaAgent
+import agent.{Message, AskMessage, InformMessage, Run, Finished}
 import behavior.AbstractBehavior
 import akka.actor.FSM
 import akka.actor.ActorRef
@@ -17,12 +18,10 @@ case object Ended extends BehaviorAgentState
 case object Error extends BehaviorAgentState
 case object BehaviorActive extends BehaviorAgentState
 
-sealed trait BehaviorAgentMessage
+sealed trait BehaviorAgentMessage extends Message
 case object Setup extends BehaviorAgentMessage
-case object Run extends BehaviorAgentState
-case object Next extends BehaviorAgentState
-case object End extends BehaviorAgentState
-case object Finished extends BehaviorAgentState
+case object Next extends BehaviorAgentMessage
+case object End extends BehaviorAgentMessage
 
 trait Behavioral extends FSM[BehaviorAgentState,Int]{
   val behaviors: ArrayBuffer[ActorRef] = ArrayBuffer.empty

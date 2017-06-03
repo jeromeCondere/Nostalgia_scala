@@ -1,7 +1,6 @@
 package agent.simulation.graphical.netlogo
 import agent.simulation.graphical.GraphicalAgent
 import agent.behavioral.BehaviorAgent
-import agent.behavioral.Run
 import agent.behavioral.Setup
 import agent.Simple
 import behavior.OneShotBehavior
@@ -12,6 +11,9 @@ import scala.concurrent.duration._
 import akka.actor.ActorRef
 import akka.actor.Props
 import akka.pattern.ask
+import akka.util.Timeout
+import scala.concurrent._;
+import scala.util.{Success, Failure}
 
 import org.nlogo.lite.InterfaceComponent
 
@@ -23,8 +25,6 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   final def cmd(cmdString: String) = comp.command(cmdString)
   final def report(reportString: String) = comp.report(reportString)
   
-  //TODO on doit avoir des behaviors
-  // 1 pour run et 1 pour les output
   final def runNetlogo = {
     wait {
       frame.setSize(netlogoModel.params.dim._1, netlogoModel.params.dim._2)
@@ -43,13 +43,22 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   }
   
   final def run = {
+   val eps = 5
+   implicit val timeout = Timeout((maxTicks + eps)/fps seconds)
+   import ExecutionContext.Implicits.global
+   
    val behaviorAgent = context.actorOf(Props(new NostalgiaBehaviorAgent()))
    behaviorAgent ! Setup
-   
+
    //TODO add treatment when receiving Finished message
-   behaviorAgent ! Run
-   
+   val futureFinished = (behaviorAgent ? agent.Run).mapTo[agent.Finished.type]
+   futureFinished onComplete {
+    case Success(v) => context.parent ! agent.Finished
+                       
+    case Failure(e) => println(e.getMessage)
+   }
   }
+  
   /**setup function before running the netlogo model*/
   def setup = ???
   
@@ -64,7 +73,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
     
       class NostalgiaTickerBehavior(period:FiniteDuration)(toRun:() =>Unit) extends TickerBehavior(period:FiniteDuration)(toRun)
       {
-        override protected def stopTicker: Boolean = {
+        override final def stopTicker: Boolean = {
           tick > maxTicks
         }
       }
