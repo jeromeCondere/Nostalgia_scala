@@ -72,7 +72,7 @@ trait Behavioral extends FSM[BehaviorAgentState,Int]{
   when (Ended)
   {
      case  Event(End, _) => context.parent ! Finished
-                            stop()
+                            stop
   }
   
 }
