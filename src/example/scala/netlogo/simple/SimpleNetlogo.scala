@@ -8,6 +8,8 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
     case "run" => run
     case _ => ???
   }
+  override def check = println("ii ")
+  override def setup = {}
 }
 
 object SimpleNetlogo extends App {

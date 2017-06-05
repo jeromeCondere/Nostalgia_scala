@@ -19,8 +19,8 @@ class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[
   /** setup all Behaviors */
   override final protected def init = {
    behaviorProxyList.zipWithIndex.foreach{
-      case(behaviorProxy,index) => val name = self.path.name +"_parallel_behavior_"+ index
-                                   val actor = context.actorOf(Props(behaviorProxy.behavior()),name )
+      case(behaviorProxy,index) => val name =  "@"+self.path.name +"_parallelBehavior"+ index
+                                   val actor = context.actorOf(Props(behaviorProxy.behavior()),name)
                                    context.watch(actor)
                                    behaviorsNotFinished = name::behaviorsNotFinished
                                    actor ! Setup()

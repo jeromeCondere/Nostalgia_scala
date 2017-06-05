@@ -60,12 +60,12 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   }
   
   /**setup function before running the netlogo model*/
-  def setup = ???
+  def setup
   
   /**this function is called repeatedly to check netlogo event with report and <br>
    * send them to another netlogo agent
    * */
-  def check = ???
+  def check
   
   // a netlogo agent uses a behavior agent in order to run both runNetlogo and check
   class NostalgiaBehaviorAgent extends BehaviorAgent with Simple {
