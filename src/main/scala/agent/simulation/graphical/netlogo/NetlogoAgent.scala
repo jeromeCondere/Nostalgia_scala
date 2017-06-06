@@ -21,7 +21,7 @@ import org.nlogo.lite.InterfaceComponent
 abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(val fps: Int = 30) extends GraphicalAgent(netlogoModel) {
   protected  val frame = new javax.swing.JFrame
   protected  val comp = new InterfaceComponent(frame)
-  
+  println("fps "+fps)
   final def cmd(cmdString: String) = comp.command(cmdString)
   final def report(reportString: String) = comp.report(reportString)
   
@@ -45,7 +45,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   final def run = {
    val eps = 5
    implicit val timeout = Timeout((maxTicks + eps)/fps seconds)
-   import ExecutionContext.Implicits.global
+   import context.dispatcher
    
    val behaviorAgent = context.actorOf(Props(new NostalgiaBehaviorAgent()))
    behaviorAgent ! Setup
@@ -78,9 +78,10 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
         }
       }
     
-      addBehavior(BehaviorProxy(OneShotBehavior{
-        setup
+     addBehavior(BehaviorProxy(OneShotBehavior{
+       NetlogoAgent.this.setup
       }))
+
       
       val bpCheck = BehaviorProxy(new NostalgiaTickerBehavior((1/fps) seconds)(()=> {
         tick+=1
@@ -90,7 +91,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
       val bpRunNetlogo = BehaviorProxy(OneShotBehavior{
         runNetlogo
       })
-      
+
       val listBp = List(bpRunNetlogo, bpCheck)
       addBehavior(BehaviorProxy(ParralelBehavior(listBp)))
    }

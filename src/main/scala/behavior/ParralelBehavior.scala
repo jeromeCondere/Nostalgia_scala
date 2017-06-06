@@ -18,8 +18,8 @@ class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[
   
   /** setup all Behaviors */
   override final protected def init = {
-   behaviorProxyList.zipWithIndex.foreach{
-      case(behaviorProxy,index) => val name =  "@"+self.path.name +"_parallelBehavior"+ index
+   behaviorProxyList.zipWithIndex.foreach {
+      case(behaviorProxy,index) => val name =  ("@"+self.path.name +"_parallelBehavior"+ index).filterNot("$".toSet)
                                    val actor = context.actorOf(Props(behaviorProxy.behavior()),name)
                                    context.watch(actor)
                                    behaviorsNotFinished = name::behaviorsNotFinished
@@ -36,7 +36,7 @@ class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[
   when(ComplexRunning)
   {
     case Event(ComplexRun, _) => complexRun
-                                  stay
+                                 stay
     
     case Event(Finished, _) => if(!behaviorsNotFinished.isEmpty) {
                                  val behaviorName = sender.path.name
@@ -54,6 +54,7 @@ class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[
                                   goto(Ended) 
 
   }
+  
 }
 
 /** ParralelBehavior (a behavior that runs a list of behaviors asynchronously)*/
