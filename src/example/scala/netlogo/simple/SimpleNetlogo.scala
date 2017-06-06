@@ -3,7 +3,7 @@ import akka.actor._
 import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical._
 import agent.Simple
-class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(1000)(1) with Simple {
+class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(20)(1) with Simple {
   def receive = {
     case "run" => run
     case _ => 
