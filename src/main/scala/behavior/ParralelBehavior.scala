@@ -44,15 +44,13 @@ class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[
 
                                  if(behaviorsNotFinished.isEmpty) 
                                    self ! FinishedRun
-                                 stay
                                } 
                                else 
                                  self ! FinishedRun
-                                 stay
+                               stay
 
     case Event(FinishedRun, _) => self ! Poke
                                   goto(Ended) 
-
   }
   
 }

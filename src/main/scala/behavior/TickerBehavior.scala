@@ -2,7 +2,8 @@ package behavior
 import scala.concurrent.duration._
 import akka.actor.ActorRef
 import akka.actor.Props
-
+import akka.actor.Cancellable
+case object Tick
 /**
  * TickerBehavior <br>
  * A behavior that run according to a frequency
@@ -16,23 +17,36 @@ class TickerBehavior (period:FiniteDuration)(toRun:() => Unit) extends  Abstract
   
   //once the behavior finished to run it ask for run again
   private[this] var isStarted = false
-  override final def run() =
+  private[this]  var sched:Cancellable = null
+  override final def run =
   {
     if (isStarted == false)
     {
       val system = context.system
       import system.dispatcher
-      system.scheduler.schedule(50 millis, period){
-          if(stopTicker == false)
-            {
-              toRun() 
-            }
-          else
-            self ! FinishedRun
-      } 
+      sched = system.scheduler.schedule(50 millis, period, self, Tick);
       isStarted = true
     }
     
+  }
+  // re override in order to add Tick event gestion
+  whenUnhandled 
+  {
+    case Event(Tick, _) =>  if(stopTicker == false)
+                            {
+                              toRun() 
+                            } else {  
+                              self ! FinishedRun
+                              sched.cancel
+                            }
+                           stay
+    case Event(Show, _) => log.info("\n"+toString)
+                           stay
+                           
+    case Event(Stop, _) => log.debug("stopping behavior "+ self.path.name)
+                           self ! Poke
+                           goto(Killed)
+    case _ => stay
   }
   /** ending condition to finish the behavior*/
   protected def stopTicker:Boolean = {false}
