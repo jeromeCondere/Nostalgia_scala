@@ -15,7 +15,7 @@ case object Tick
  */
 class TickerBehavior (period:FiniteDuration)(toRun:() => Unit) extends ComplexBehavior(toRun){
   
-  private[this]  var sched:Cancellable = null
+  private[this]  var sched: Cancellable = null
   
   final def tickRun = {
     if(stopTicker == false)
