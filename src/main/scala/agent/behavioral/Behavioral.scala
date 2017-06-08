@@ -47,9 +47,13 @@ trait Behavioral extends FSM[BehaviorAgentState,Int]{
                                   
   }
   
+  //the actor who command the behavior agent
+  private[this] var supervisor: ActorRef = _
+  
   when(Ready)
   {
-    case  Event(Run,_) => self ! Run
+    case  Event(Run,_) => supervisor = sender
+                          self ! Run
                           goto(Running) using 0
   }
   
@@ -71,7 +75,8 @@ trait Behavioral extends FSM[BehaviorAgentState,Int]{
   
   when (Ended)
   {
-     case  Event(End, _) => context.parent ! Finished
+     case  Event(End, _) => //context.parent ! Finished
+                            supervisor ! Finished
                             stop
   }
   

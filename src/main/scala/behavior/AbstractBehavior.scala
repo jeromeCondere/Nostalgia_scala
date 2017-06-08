@@ -48,8 +48,7 @@ object doNothing {
  * @param supervisor reference to the actor that use the behavior
  */
 abstract class AbstractBehavior(toRun:() => Unit) extends FSM[BehaviorState,BehaviorData]{
-  private[this] var isInit = false
-  private var supervisor :ActorRef  = _
+  private[this] var supervisor :ActorRef  = _
   
   /** 
    *  initialize the behavior <br>

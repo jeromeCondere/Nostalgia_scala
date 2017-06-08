@@ -8,12 +8,12 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
     case "run" => run
     case _ => 
   }
-  override def check = println(">check<")
+  override def check = {}//println(">check<")
   override def setup = println("setup")
 }
 
 object SimpleNetlogo extends App {
-  val graphicalParams = GraphicalParam((0,0), (800,600))
+  val graphicalParams = GraphicalParam((0,0), (500,500))
   val netlogoModel = NetlogoModel(graphicalParams, "Fire.nlogo")
   
   val system = ActorSystem("mySystem")
