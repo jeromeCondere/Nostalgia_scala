@@ -13,41 +13,39 @@ case object Tick
  * @param supervisor reference to the actor that use the behavior
  * @param period amount of time between two runs
  */
-class TickerBehavior (period:FiniteDuration)(toRun:() => Unit) extends  AbstractBehavior(toRun){
+class TickerBehavior (period:FiniteDuration)(toRun:() => Unit) extends ComplexBehavior(toRun){
   
-  //once the behavior finished to run it ask for run again
-  private[this] var isStarted = false
   private[this]  var sched:Cancellable = null
-  override final def run =
-  {
-    if (isStarted == false)
+  
+  final def tickRun = {
+    if(stopTicker == false)
     {
-      val system = context.system
-      import system.dispatcher
-      sched = system.scheduler.schedule(50 millis, period, self, Tick);
-      isStarted = true
+      toRun() 
+    } else {  
+      self ! FinishedRun
+      sched.cancel
     }
-    
   }
-  // re override in order to add Tick event gestion
-  whenUnhandled 
+  
+  final def complexRun =
   {
-    case Event(Tick, _) =>  if(stopTicker == false)
-                            {
-                              toRun() 
-                            } else {  
-                              self ! FinishedRun
-                              sched.cancel
-                            }
-                           stay
-    case Event(Show, _) => log.info("\n"+toString)
-                           stay
-                           
-    case Event(Stop, _) => log.debug("stopping behavior "+ self.path.name)
-                           self ! Poke
-                           goto(Killed)
-    case _ => stay
+    val system = context.system
+    import system.dispatcher
+    sched = system.scheduler.schedule(50 millis, period, self, Tick);
   }
+
+  when(ComplexRunning)
+  {
+    case Event(ComplexRun, _) => complexRun
+                                 stay
+
+    case Event(Tick, _) => tickRun
+                           stay
+
+    case Event(FinishedRun, _) => self ! Poke
+                                  goto(Ended) 
+  }
+  
   /** ending condition to finish the behavior*/
   protected def stopTicker:Boolean = {false}
 }
