@@ -7,6 +7,11 @@ import akka.actor._
 import akka.testkit._
 import scala.concurrent.duration._
 import scala.concurrent.Future;
+import agent.port.PortDevice
+import agent.port.Out
+import agent.port.IsOut
+import agent.port.IsIn
+import agent.port.In
 
 class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
@@ -72,6 +77,38 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
       
       portAgent2 ! In(portAgent1, "inA2", "outA1") //(portAgent2, inA2) << (portAgent1, outA1)
       portAgent1 ! Out(portAgent2, "outA1", "inA2")//(portAgent1, outA1) >> (portAgent2, inA2)
+      
+       
+      portAgent2 ! IsIn(In(portAgent1, "inA2", "outA1"))
+      expectMsg(true)
+      portAgent2 ! IsIn(In(portAgent1, "inA7", "outA1"))
+      expectMsg(false)
+      
+      portAgent1 ! IsOut(Out(portAgent2, "outA1", "inA2"))
+      expectMsg(true)
+      portAgent1 ! IsOut(Out(portAgent2, "outA7", "inA2"))
+      expectMsg(false)
+   
+      
+    }
+    "correctly add a in/out connection(with pattern)" in {
+      class myAgent extends NostalgiaAgent with Simple with PortDevice {
+        def normalReceive(x: Any) = {
+          
+        }
+        def portReceive(message: Any, portName: String) = {
+          
+        }
+      }
+      
+      import agent.port.Pattern.Connection
+      
+      val portAgent1 = TestActorRef (new myAgent(), "portAgent11")
+      val portAgent2 = TestActorRef (new myAgent(), "portAgent22")
+      
+      
+      (portAgent2, "inA2") <<+ (portAgent1, "outA1") 
+      (portAgent1, "outA1") >>+ (portAgent2, "inA2")
       
        
       portAgent2 ! IsIn(In(portAgent1, "inA2", "outA1"))

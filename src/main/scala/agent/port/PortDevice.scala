@@ -1,7 +1,9 @@
-package agent
+package agent.port
 import akka.actor.ActorRef
 import akka.actor.Actor
 import scala.collection.mutable.Map
+import agent.InformMessage
+import akka.actor.actorRef2Scala
 sealed trait Port
 /**(self, in) << (actor,out)*/
 case class In(actor: ActorRef, inPort: String, outPort: String) extends Port
