@@ -1,13 +1,15 @@
 import org.scalatest._
 import behavior.OneShotBehavior
+import behavior.TimerBehavior
+import behavior.TickerBehavior
 import behavior.proxy.BehaviorProxy
-import agent.behavioral._
 import agent._
 import akka.actor._
 import akka.testkit._
 import scala.concurrent.duration._
 import scala.concurrent.Future;
 import agent.port.PortDevice
+import agent.port.SimpleDevice
 import agent.port.Out
 import agent.port.IsOut
 import agent.port.IsIn
@@ -22,8 +24,8 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
     TestKit.shutdownActorSystem(system)
   }
   "A behaviorAgent" must {
+    import agent.behavioral._
     "execute correctly (OneShotBehavior)" in {
-      import agent.behavioral._
       var a = 2
         class MyBehaviorAgent extends BehaviorAgent with Simple {
             addBehavior(BehaviorProxy(OneShotBehavior{
@@ -34,44 +36,71 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
               a+=4
             }))
          }
-       val testSelf = self
-       class MyParent extends Actor {
-         val behaviorAgent = context.actorOf(Props(new MyBehaviorAgent()), "myBehaviorAgent")
-         context.watch(behaviorAgent)
-         var probe: ActorRef = _
-         
-         def receive = {
-           case probe: ActorRef => this.probe = probe
-           case "run" => behaviorAgent.tell(Setup, self)
-                         behaviorAgent.tell(Run, self)
-           case Finished => probe.tell(Finished, self)
-         }
-       }
+
+        val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myBehaviorAgent")
+        behaviorAgent ! Setup
+        behaviorAgent ! Run
        
-        val parentRef = system.actorOf(Props(new MyParent()), "myParent")
-        val probe = TestProbe("probe")
-        parentRef ! probe.ref
-        parentRef ! "run"
+   
         awaitCond(a == 8, 70 millis)
-        probe.expectMsg(3 seconds, Finished)
+        expectMsg(Finished)
       }
     "execute correctly (TimerBehavior)" in {
-      fail
+        var a = 3
+        class MyBehaviorAgent extends BehaviorAgent with Simple {
+            addBehavior(BehaviorProxy(OneShotBehavior{
+              a+=2
+            }))
+            
+            addBehavior(BehaviorProxy(TimerBehavior(200 millis){
+              a+=4
+            }))
+         }
+
+        val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myTimerBehaviorAgent")
+        behaviorAgent ! Setup
+        behaviorAgent ! Run
+       
+        awaitCond(a == 9, 270 millis)
+        expectMsg(Finished)
     }
     "execute correctly (TickerBehavior)" in {
+        var a = 3
+        var b = 4
+        class MyTickerBehavior(period:FiniteDuration)(toRun:() =>Unit) extends TickerBehavior(period:FiniteDuration)(toRun)
+        {
+          override protected def stopTicker: Boolean = {
+            b == 12
+          }
+        }
+        
+        class MyBehaviorAgent extends BehaviorAgent with Simple {
+            addBehavior(BehaviorProxy(OneShotBehavior{
+              a+=2
+            }))
+            
+            addBehavior(BehaviorProxy(new MyTickerBehavior(50 millis)(() => {
+              a+=4
+              b+=2
+            })))
+         }
+
+        val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myTimerBehaviorAgent")
+        behaviorAgent ! Setup
+        behaviorAgent ! Run
+        
+        expectNoMsg(200 millis)
+        awaitCond(a == 21 && b == 12, 280 millis)// we must add the 50 millis delay
+        expectMsg(Finished)
+    }
+    "execute correctly (ParallelBehavior)" in {
       fail
     }
  }
   "a PortDevice" must {
+    class myAgent extends NostalgiaAgent with Simple with PortDevice with SimpleDevice {}
     "correctly add a in/out connection" in {
-      class myAgent extends NostalgiaAgent with Simple with PortDevice {
-        def normalReceive(x: Any) = {
-          
-        }
-        def portReceive(message: Any, portName: String) = {
-          
-        }
-      }
+      
       val portAgent1 = TestActorRef (new myAgent(), "portAgent1")
       val portAgent2 = TestActorRef (new myAgent(), "portAgent2")
       
@@ -92,15 +121,6 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
       
     }
     "correctly add a in/out connection(with pattern)" in {
-      class myAgent extends NostalgiaAgent with Simple with PortDevice {
-        def normalReceive(x: Any) = {
-          
-        }
-        def portReceive(message: Any, portName: String) = {
-          
-        }
-      }
-      
       import agent.port.Pattern.Connection
       
       val portAgent1 = TestActorRef (new myAgent(), "portAgent11")
