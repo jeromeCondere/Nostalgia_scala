@@ -14,6 +14,7 @@ import agent.port.Out
 import agent.port.IsOut
 import agent.port.IsIn
 import agent.port.In
+import agent.port.PortMessage
 
 class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
@@ -143,6 +144,29 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
       
     }
     "send the message to the corrects agents" in {
+      import agent.port.Pattern.Connection
+      
+      class MyDeviceAgent extends NostalgiaAgent with Simple with PortDevice {
+        var probe: ActorRef = _
+        
+        def normalReceive(x: Any, sender: ActorRef) = {
+          x match {
+            case a: ActorRef => probe = a
+          }
+        }
+        
+        def portReceive(message: Any, portName: String) = {
+          val t = (message, portName)
+          probe.tell(t, self)
+        }
+      }
+      
+      val probe1 = TestProbe()
+      val myDeviceAgent1 = system.actorOf(Props(new MyDeviceAgent()), "myDeviceAgent1")
+      val myDeviceAgent2 = system.actorOf(Props(new MyDeviceAgent()), "myDeviceAgent2")
+      (myDeviceAgent1, "out1") >>+ (myDeviceAgent2, "in2")
+      (myDeviceAgent2, "in2") <<+ (myDeviceAgent1, "out1")
+      
       fail
     }
   }

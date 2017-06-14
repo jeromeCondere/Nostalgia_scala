@@ -66,10 +66,10 @@ trait PortDevice extends Actor{
     case out: Out => this +> out
     case IsIn(in) => sender ! isIn(in)
     case IsOut(out) => sender ! isOut(out)
-    case x: Any => normalReceive(x)
+    case x: Any => normalReceive(x, sender)
   }
   /**receive method for message that are not sent on a port*/
-  def normalReceive(x: Any)
+  def normalReceive(x: Any, sender: ActorRef)
   /**receive method for message that are sent on a port*/
   def portReceive(message: Any, portName: String)
   /**send method for message associated with an port(out)*/

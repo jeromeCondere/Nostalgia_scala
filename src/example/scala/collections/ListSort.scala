@@ -1,5 +1,6 @@
 package collections
-import agent.list._
+import agent.collection._
+import agent.collection.list.ListAgent
 import akka.actor._
 import akka.pattern.{ ask, pipe }
 import scala.concurrent._;
