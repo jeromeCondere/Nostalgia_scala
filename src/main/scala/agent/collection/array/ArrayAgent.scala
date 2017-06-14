@@ -32,5 +32,5 @@ class ArrayAgent[A] (a: Array[A]) extends NostalgiaAgent {
 }
 
 object ArrayAgent {
-  def props[A](a: Array[A])= Props(new ArrayAgent(a))
+  def props[A](a: Array[A]) = Props(new ArrayAgent(a))
 }
