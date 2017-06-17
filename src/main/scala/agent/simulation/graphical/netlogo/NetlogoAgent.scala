@@ -25,7 +25,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   final def cmd(cmdString: String) = comp.command(cmdString)
   final def report(reportString: String) = comp.report(reportString)
   
-  final def runNetlogo = {
+  def runNetlogo = {
     wait {
       frame.setSize(netlogoModel.params.dim._1, netlogoModel.params.dim._2)
       frame.add(comp)
@@ -79,19 +79,21 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
     
       addBehavior(BehaviorProxy(OneShotBehavior{
        NetlogoAgent.this.setup
+       comp.listenerManager.addListener(new NetlogoSimpleListener{
+         override def tickCounterChanged(ticks: Double) = {
+           if(tick < maxTicks)
+           {
+             tick = ticks.toInt
+             check
+           }
+           
+         }
+       })
       }))
 
-      val bpCheck = BehaviorProxy(new NostalgiaTickerBehavior((1/fps) seconds)(()=> {
-        check
-        tick+=1
-      }))
-      
-      val bpRunNetlogo = BehaviorProxy(OneShotBehavior{
+      addBehavior(BehaviorProxy(OneShotBehavior{
         runNetlogo
-      })
-
-      val listBp = List(bpRunNetlogo, bpCheck)
-      addBehavior(BehaviorProxy(ParralelBehavior(listBp)))
+      }))
    }
   
 }

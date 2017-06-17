@@ -3,13 +3,14 @@ import akka.actor._
 import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical._
 import agent.Simple
+
 class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(1000)(30) with Simple {
   def receive = {
     case "run" => run
     case _ => 
   }
   override def check = {}//println(">check<")
-  override def setup = println("setup")
+  override def setup = {}
 }
 
 object SimpleNetlogo extends App {
