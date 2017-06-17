@@ -9,7 +9,7 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
     case "run" => run
     case _ => 
   }
-  override def check = {}//println(">check<")
+  override def check = {}
   override def setup = {}
 }
 
