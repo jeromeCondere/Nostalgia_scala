@@ -14,6 +14,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent._;
 import scala.util.{Success, Failure}
+import java.awt.Point
 
 import org.nlogo.lite.InterfaceComponent
 
@@ -28,6 +29,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   def runNetlogo = {
     wait {
       frame.setSize(netlogoModel.params.dim._1, netlogoModel.params.dim._2)
+      frame.setLocation(new Point(netlogoModel.params.pos._1, netlogoModel.params.pos._2))
       frame.add(comp)
       frame.setVisible(true)
       comp.open(netlogoModel.path)
