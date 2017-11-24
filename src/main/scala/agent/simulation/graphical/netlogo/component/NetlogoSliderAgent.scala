@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo.NetlogoModel
 import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
+import org.nlogo.api.Version
 
 class SliderModel(params: GraphicalParam,val size: Int, val defaultValue:Int, val minValue:Int, val maxValue:Int, x: Any*) extends NetlogoModel(params,"", x) {
   
@@ -105,7 +106,7 @@ Polygon -10899396 true false 85 204 60 233 54 254 72 266 85 252 107 210
 Polygon -7500403 true true 119 75 179 75 209 101 224 135 220 225 175 261 128 261 81 224 74 135 88 99
 
 @#$$#@#$$#@
-NetLogo 5.2.0
+${Version.version}
 @#$$#@#$$#@
 @#$$#@#$$#@
 @#$$#@#$$#@
