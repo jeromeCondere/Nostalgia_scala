@@ -6,12 +6,12 @@ import agent._
 import java.awt.Point
 import org.nlogo.api.Version
 
-class SliderModel(params: GraphicalParam,val size: Int, val defaultValue:Int, val minValue:Int, val maxValue:Int, x: Any*) extends NetlogoModel(params,"", x) {
+class SliderModel(params: GraphicalParam, val name: String, val size: Int, val defaultValue:Int, val minValue:Int, val maxValue:Int, x: Any*) extends NetlogoModel(params,"", x) {
   
 }
 
 object SliderModel {
-  def apply(params: GraphicalParam, size: Int = 300, defaultValue:Int = 50, minValue:Int = 0, maxValue:Int = 100) = new SliderModel(params, size,defaultValue, minValue, maxValue)
+  def apply(params: GraphicalParam, name: String, size: Int = 300, defaultValue:Int = 50, minValue:Int = 0, maxValue:Int = 100) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
 }
 
 class NetlogoSliderAgent(sliderModel: SliderModel)(maxTicks:Int = 1000)(fps: Int = 30) extends NetlogoAgentComponent(sliderModel)(maxTicks)(fps) with Simple {
@@ -34,8 +34,6 @@ class NetlogoSliderAgent(sliderModel: SliderModel)(maxTicks:Int = 1000)(fps: Int
         }
       })
     }
-    cmd("setup")
-
   }
   
   def receive = {
@@ -43,8 +41,6 @@ class NetlogoSliderAgent(sliderModel: SliderModel)(maxTicks:Int = 1000)(fps: Int
   }
    
   def modelSlider = {s"""
-to setup
-end
 @#$$#@#$$#@
 GRAPHICS-WINDOW
 10
@@ -75,11 +71,11 @@ $fps
 
 SLIDER
 0
-10
+0
 ${sliderModel.size}
 43
-my_variable
-my_variable
+${sliderModel.name}
+${sliderModel.name}
 ${sliderModel.minValue}
 ${sliderModel.maxValue}
 ${sliderModel.defaultValue}

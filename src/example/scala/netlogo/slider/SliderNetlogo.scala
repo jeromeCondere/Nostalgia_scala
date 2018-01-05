@@ -17,7 +17,7 @@ class mySliderAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderM
 
 object SliderNetlogo extends App {
   val graphicalParams = GraphicalParam((0,0))
-  val sliderModel = SliderModel(graphicalParams)
+  val sliderModel = SliderModel(graphicalParams, "my_slider")
   
   val system = ActorSystem("mySystem")
   val myNetlogo = system.actorOf(Props(new mySliderAgent(sliderModel)), "myNetlogo")

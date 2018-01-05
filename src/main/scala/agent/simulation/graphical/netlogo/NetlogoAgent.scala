@@ -19,7 +19,7 @@ import java.awt.Point
 import org.nlogo.lite.InterfaceComponent
 
 /**A class used to create a classic netlogoAgent that run the model nlogo file*/
-abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(val fps: Int = 30) extends GraphicalAgent(netlogoModel) {
+abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = 1000)(val fps: Int = 30) extends GraphicalAgent(netlogoModel) {
   protected  val frame = new javax.swing.JFrame
   protected  val comp = new InterfaceComponent(frame)
 
@@ -71,14 +71,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
   // a netlogo agent uses a behavior agent in order to run both runNetlogo and check
   class NostalgiaBehaviorAgent extends BehaviorAgent with Simple {
     var tick = 0
-    
-      class NostalgiaTickerBehavior(period:FiniteDuration)(toRun:() =>Unit) extends TickerBehavior(period:FiniteDuration)(toRun)
-      {
-        override final def stopTicker: Boolean = {
-          tick > maxTicks
-        }
-      }
-    
+
       addBehavior(BehaviorProxy(OneShotBehavior{
        NetlogoAgent.this.setup
        comp.listenerManager.addListener(new NetlogoSimpleListener{
@@ -88,7 +81,6 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(maxTicks:Int = 1000)(va
              tick = ticks.toInt
              check
            }
-           
          }
        })
       }))
