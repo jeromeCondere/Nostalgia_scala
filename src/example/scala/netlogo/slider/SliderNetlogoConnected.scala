@@ -17,16 +17,16 @@ case class Default(val a: Int, val name: String)
 
 class mySliderConnectedAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderModel)(15000)(10) with Simple {
   override def sliderHandle(value: Double, min: Double, increment: Double, max: Double, buttonReleased: Boolean) = {
-    issou ! value
+    netlogo_actor ! value
   }
   
-  var issou: ActorRef = _
+  var netlogo_actor: ActorRef = _
   
   override def setup = {}
   override def receive = {
     case "run" => run
-    case actor: ActorRef => issou = actor
-    case "default" => issou ! Default(sliderModel.defaultValue, "density")
+    case actor: ActorRef => netlogo_actor = actor
+    case "default" => netlogo_actor ! Default(sliderModel.defaultValue, "density")
   }
 }
 
