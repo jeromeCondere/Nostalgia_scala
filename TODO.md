@@ -18,6 +18,10 @@ Add fonction that generates parts of .nlogo file (slider, button, switch, etc.)
 - Add Array and TreeAgent (more difficult)  
 - Add SetAgent  
 
+### Tests
+- Correct tests on portAgent
+-- Fails when a test from before (behavior)  fails
+
 ### Example
 
 Implement the personalized sort

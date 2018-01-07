@@ -18,19 +18,21 @@ implicit val systemSupervisor = self
   "A behavior (general)" must {
   
     "run the code properly" in {
+      val testProbe = TestProbe()
       var a = 2
       val beRef = system.actorOf(Props(OneShotBehavior{
         a = a + 2
       } ), "runBehavior")
       assert(a==2)
       
-      beRef ! Setup()
+      beRef ! Setup()(testProbe.ref)
       beRef ! Run
-      awaitCond(a == 4, 70 millis)
-      expectMsg(Finished)
+      testProbe.awaitCond(a == 4, 70 millis)
+      testProbe.expectMsg(Finished)
      }
      
    "init properly" in {
+      val testProbe = TestProbe()
       class MyBehavior(toRun:() =>Unit) extends OneShotBehavior(toRun)
       {
         
@@ -39,14 +41,14 @@ implicit val systemSupervisor = self
       }
       val beRef = TestActorRef (new MyBehavior(doNothing()), "initBehavior" )
       val be = beRef.underlyingActor
-      beRef ! Setup()
+      beRef ! Setup()(testProbe.ref)
       assert(be.a==4)
-      awaitCond(be.a == 4, 70 millis)
-      expectNoMsg(150 millis)
+      testProbe.awaitCond(be.a == 4, 70 millis)
+      testProbe.expectNoMsg(150 millis)
   }
    
    "init only once" in {
-     
+      val testProbe = TestProbe()
       class MyBehavior(toRun:() =>Unit) extends OneShotBehavior(toRun)
       {
         var b =2
@@ -56,51 +58,55 @@ implicit val systemSupervisor = self
       var beRef = TestActorRef( new MyBehavior(()=>{}) , "initBehavior2")
       val be = beRef.underlyingActor
       assert(be.b==2)
-      beRef ! Setup()
-      awaitCond(be.b == 6, 50 millis)
-      beRef ! Setup() //setting up twice doesn't change the value
-      awaitCond(be.b == 6, 100 millis)
+      beRef ! Setup()(testProbe.ref)
+      testProbe.awaitCond(be.b == 6, 50 millis)
+      beRef ! Setup()(testProbe.ref) //setting up twice doesn't change the value
+      testProbe.awaitCond(be.b == 6, 100 millis)
     }
 }
 
 "A TimerBehavior" must {
   
   "execute after a determinded duration" in {
+    val testProbe = TestProbe()
     var a =2
     var beRef = TestActorRef(TimerBehavior(100 millis){
       a+=3
     })
     
-    beRef ! Setup()
+    beRef ! Setup()(testProbe.ref)
     beRef ! Run
-    awaitCond(a==5, 190 millis) // we give +90 millis to check if a has been updated
-    expectMsg(Finished)
+    testProbe.awaitCond(a==5, 190 millis) // we give +90 millis to check if a has been updated
+    testProbe.expectMsg(Finished)
   }
 }
 
 "A TickerBehavior" must {
   "exec repeatedly" in {
+    val testProbe = TestProbe()
     var e = 0
     var beRef = TestActorRef(TickerBehavior(50 millis){
       e+=2
     }, "tickerBehavior")
-    beRef ! Setup()
+    beRef ! Setup()(testProbe.ref)
     beRef ! Run
     // we test every 40 millis if the condition holds
-    awaitCond(e==20, 1 seconds, 40 millis)
+    testProbe.awaitCond(e==20, 1 seconds, 40 millis)
     beRef ! Stop
-    expectMsg(Dead)
+    testProbe.expectMsg(Dead)
   }
    "send a Dead message after death to supervisor"  in {
+     val testProbe = TestProbe()
      var beRef = TestActorRef(TickerBehavior(50 millis){
       
     },"deadTickerBehavior")
-      beRef ! Setup()
+      beRef ! Setup()(testProbe.ref)
       beRef ! Run
       beRef ! Stop
-      expectMsg(Dead)
+      testProbe.expectMsg(Dead)
   }
   "send a finished message" in {
+    val testProbe = TestProbe()
     var b =0
     class MyTickerBehavior(period:FiniteDuration)(toRun:() =>Unit) extends TickerBehavior(period:FiniteDuration)(toRun)
       {
@@ -112,17 +118,17 @@ implicit val systemSupervisor = self
      b+=2
    }) ,"finishedTickerBehavior");
    
-   beRef ! Setup()
+   beRef ! Setup()(testProbe.ref)
    beRef ! Run
    
-   awaitCond(b==6, 1 seconds, 40 millis)
-   expectMsg(Finished)
+   testProbe.awaitCond(b==6, 1 seconds, 40 millis)
+   testProbe.expectMsg(Finished)
   }
 }
 
 "A ParallelBehavior" must {
-  
   "init all behaviors correctly" in {
+    val testProbe = TestProbe()
     var a1 = 4
     var a2 = 6
     class MyBehavior(toRun:() =>Unit) extends OneShotBehavior(toRun)
@@ -140,11 +146,12 @@ implicit val systemSupervisor = self
     val listBp = List(bp1,bp2)
     var beRef = TestActorRef(new ParralelBehavior(listBp),"parrallelBehavior")
     
-    beRef ! Setup()
-    awaitCond(a1==6 && a2==9, 2 seconds)
+    beRef ! Setup()(testProbe.ref)
+    testProbe.awaitCond(a1==6 && a2==9, 2 seconds)
   }
   
   "launch several behaviors asynchronously" in {
+    val testProbe = TestProbe()
     var a1 = 7
     var a2 = 9
     val bp1 = BehaviorProxy{OneShotBehavior{
@@ -159,14 +166,14 @@ implicit val systemSupervisor = self
     val listBp = List(bp1,bp2)
     var beRef = TestActorRef(ParralelBehavior(listBp),"parrallelBehavior2")
     
-    beRef ! Setup()
+    beRef ! Setup()(testProbe.ref)
     beRef ! Run
-    awaitCond(a1==17 && a2==14, 2 seconds)
-    expectMsg(Finished)
+    testProbe.awaitCond(a1==17 && a2==14, 2 seconds)
+    testProbe.expectMsg(Finished)
   }
   
   "receive a Finished message from every agent stopped"  in {
-    
+    val testProbe = TestProbe()
     val bp1 = BehaviorProxy{OneShotBehavior{
       var a = 1  
       for ( i<-1 to 100)
@@ -179,11 +186,11 @@ implicit val systemSupervisor = self
     val listBp = List(bp1,bp2)
     var beRef = TestActorRef(ParralelBehavior(listBp),"parrallelBehavior3")
     
-    beRef ! Setup()
+    beRef ! Setup()(testProbe.ref)
     beRef ! Run
     
-    expectMsg(Finished)
-    expectNoMsg(100 millis)
+    testProbe.expectMsg(Finished)
+    testProbe.expectNoMsg(100 millis)
   }  
 }
 

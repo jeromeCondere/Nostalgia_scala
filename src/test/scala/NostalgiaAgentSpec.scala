@@ -2,6 +2,7 @@ import org.scalatest._
 import behavior.OneShotBehavior
 import behavior.TimerBehavior
 import behavior.TickerBehavior
+import behavior.ParralelBehavior
 import behavior.proxy.BehaviorProxy
 import agent._
 import akka.actor._
@@ -19,14 +20,13 @@ import agent.port.PortMessage
 class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
   
-  implicit val systemSupervisor = self
-  
   override def afterAll {
     TestKit.shutdownActorSystem(system)
   }
   "A behaviorAgent" must {
     import agent.behavioral._
     "execute correctly (OneShotBehavior)" in {
+      val testProbe = TestProbe()
       var a = 2
         class MyBehaviorAgent extends BehaviorAgent with Simple {
             addBehavior(BehaviorProxy(OneShotBehavior{
@@ -39,14 +39,14 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
          }
 
         val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myBehaviorAgent")
-        behaviorAgent ! Setup
-        behaviorAgent ! Run
-       
+        testProbe.send(behaviorAgent, Setup)
+        testProbe.send(behaviorAgent, Run)
    
-        awaitCond(a == 8, 70 millis)
-        expectMsg(Finished)
+        testProbe.awaitCond(a == 8, 70 millis)
+        testProbe.expectMsg(Finished)
       }
     "execute correctly (TimerBehavior)" in {
+        val testProbe = TestProbe()
         var a = 3
         class MyBehaviorAgent extends BehaviorAgent with Simple {
             addBehavior(BehaviorProxy(OneShotBehavior{
@@ -59,13 +59,14 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
          }
 
         val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myTimerBehaviorAgent")
-        behaviorAgent ! Setup
-        behaviorAgent ! Run
+        testProbe.send(behaviorAgent, Setup)
+        testProbe.send(behaviorAgent, Run)
        
-        awaitCond(a == 9, 270 millis)
-        expectMsg(Finished)
+        testProbe.awaitCond(a == 9, 270 millis)
+        testProbe.expectMsg(Finished)
     }
     "execute correctly (TickerBehavior)" in {
+        val testProbe = TestProbe()
         var a = 3
         var b = 4
         class MyTickerBehavior(period:FiniteDuration)(toRun:() =>Unit) extends TickerBehavior(period:FiniteDuration)(toRun)
@@ -87,15 +88,40 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
          }
 
         val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myTimerBehaviorAgent")
-        behaviorAgent ! Setup
-        behaviorAgent ! Run
+        testProbe.send(behaviorAgent, Setup)
+        testProbe.send(behaviorAgent, Run)
         
-        expectNoMsg(200 millis)
-        awaitCond(a == 21 && b == 12, 280 millis)// we must add the 50 millis delay
-        expectMsg(Finished)
+        testProbe.expectNoMsg(200 millis)
+        testProbe.awaitCond(a == 21 && b == 12, 280 millis)// we must add the 50 millis delay
+        testProbe.expectMsg(Finished)
     }
     "execute correctly (ParallelBehavior)" in {
-      fail
+      val testProbe = TestProbe()
+      var a = 3
+      var b = 5
+      val bp1 = BehaviorProxy{OneShotBehavior{
+              a+=2
+      }}
+      val bp2 = BehaviorProxy{OneShotBehavior{
+              b+=9
+      }}
+      val listBp = List(bp1,bp2)
+      
+        class MyBehaviorAgent extends BehaviorAgent with Simple {
+            addBehavior(BehaviorProxy(OneShotBehavior{
+              a+=2
+            }))
+            
+            addBehavior(BehaviorProxy(ParralelBehavior(listBp)))
+         }
+      
+      val behaviorAgent = TestActorRef(new MyBehaviorAgent(), "myParralelBehaviorAgent")
+      testProbe.send(behaviorAgent, Setup)
+      testProbe.send(behaviorAgent, Run)
+
+      
+      testProbe.awaitCond(a == 7 && b == 14)
+      testProbe.expectMsg(Finished)
     }
  }
   "a PortDevice" must {
