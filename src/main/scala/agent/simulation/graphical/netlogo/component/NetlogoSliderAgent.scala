@@ -14,7 +14,7 @@ object SliderModel {
   def apply(params: GraphicalParam, name: String, size: Int = 300, defaultValue:Int = 50, minValue:Int = 0, maxValue:Int = 100) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
 }
 
-class NetlogoSliderAgent(sliderModel: SliderModel)(maxTicks:Int = 1000)(fps: Int = 30) extends NetlogoAgentComponent(sliderModel)(maxTicks)(fps) with Simple {
+class NetlogoSliderAgent(sliderModel: SliderModel) extends NetlogoAgentComponent(sliderModel) with Simple {
   def setup = {}
   def sliderHandle(value: Double, min: Double, increment: Double, max: Double, buttonReleased: Boolean) = {}
   

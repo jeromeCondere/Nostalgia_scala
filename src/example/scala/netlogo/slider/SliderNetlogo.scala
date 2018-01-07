@@ -8,7 +8,7 @@ import agent._
  * A simple slider example:
  * Every time the slider is moved the value is printed
  */
-class mySliderAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderModel)()() with Simple {
+class mySliderAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderModel) with Simple {
   override def sliderHandle(value: Double, min: Double, increment: Double, max: Double, buttonReleased: Boolean) = {
     println("value: "+value)
   }

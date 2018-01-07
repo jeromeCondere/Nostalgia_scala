@@ -15,7 +15,7 @@ import org.nlogo.core.CompilerException
 /** contains slider name and slider default value */
 case class Default(val a: Int, val name: String)
 
-class mySliderConnectedAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderModel)(15000)(10) with Simple {
+class mySliderConnectedAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderModel)with Simple {
   override def sliderHandle(value: Double, min: Double, increment: Double, max: Double, buttonReleased: Boolean) = {
     netlogo_actor ! value
   }
