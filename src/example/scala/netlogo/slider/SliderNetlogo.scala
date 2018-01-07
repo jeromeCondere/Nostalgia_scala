@@ -20,7 +20,7 @@ object SliderNetlogo extends App {
   val sliderModel = SliderModel(graphicalParams, "my_slider")
   
   val system = ActorSystem("mySystem")
-  val myNetlogo = system.actorOf(Props(new mySliderAgent(sliderModel)), "mySliderAgent")
+  val mySlider = system.actorOf(Props(new mySliderAgent(sliderModel)), "mySliderAgent")
  
-  myNetlogo ! Run
+  mySlider ! Run
 }
