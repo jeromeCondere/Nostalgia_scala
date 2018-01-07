@@ -11,11 +11,11 @@ class ButtonModel(params: GraphicalParam, val name: String, val size: Int, val f
 }
 
 object ButtonModel {
-  def apply(params: GraphicalParam, name: String, size: Int = 300, forever: Boolean = false) = new ButtonModel(params, name, size, forever)
+  def apply(params: GraphicalParam, name: String, size: Int = 150, forever: Boolean = false) = new ButtonModel(params, name, size, forever)
 }
 
 
-class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = 1000)(fps: Int = 30) extends NetlogoAgentComponent(buttonModel)(maxTicks)(fps) with Simple {
+class NetlogoButtonAgent (buttonModel: ButtonModel) extends NetlogoAgentComponent(buttonModel) with Simple {
   
   def setup = {}
   

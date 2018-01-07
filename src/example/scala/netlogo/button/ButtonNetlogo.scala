@@ -5,7 +5,7 @@ import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
 
-class myButtonAgent(buttonModel: ButtonModel) extends NetlogoButtonAgent(buttonModel)()() with Simple {
+class myButtonAgent(buttonModel: ButtonModel) extends NetlogoButtonAgent(buttonModel) with Simple {
   
   override def setup = {}
   override def buttonPressedHandle = println("Button has been Pressed! ->\n")
