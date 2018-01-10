@@ -152,48 +152,56 @@ class NostalgiaAgentSpec extends TestKit(ActorSystem("NostalgiaAgentSpec")) with
       
       val portAgent1 = TestActorRef (new myAgent(), "portAgent11")
       val portAgent2 = TestActorRef (new myAgent(), "portAgent22")
-      
+      val probe = TestProbe()
       
       (portAgent2, "inA2") <<+ (portAgent1, "outA1") 
       (portAgent1, "outA1") >>+ (portAgent2, "inA2")
       
        
-      portAgent2 ! IsIn(In(portAgent1, "inA2", "outA1"))
-      expectMsg(true)
-      portAgent2 ! IsIn(In(portAgent1, "inA7", "outA1"))
-      expectMsg(false)
+      probe send ( portAgent2,  IsIn(In(portAgent1, "inA2", "outA1")) )
+      probe.expectMsg(true)
+      probe send (portAgent2, IsIn(In(portAgent1, "inA7", "outA1")) )
+      probe.expectMsg(false)
       
-      portAgent1 ! IsOut(Out(portAgent2, "outA1", "inA2"))
-      expectMsg(true)
-      portAgent1 ! IsOut(Out(portAgent2, "outA7", "inA2"))
-      expectMsg(false)
+      probe send (portAgent1, IsOut(Out(portAgent2, "outA1", "inA2")) )
+      probe.expectMsg(true)
+      probe send (portAgent1, IsOut(Out(portAgent2, "outA7", "inA2")) )
+      probe.expectMsg(false)
       
     }
     "send the message to the corrects agents" in {
       import agent.port.Pattern.Connection
-      
+      import agent.port._
       class MyDeviceAgent extends NostalgiaAgent with Simple with PortDevice {
         var probe: ActorRef = _
         
         def normalReceive(x: Any, sender: ActorRef) = {
           x match {
             case a: ActorRef => probe = a
+            case (outPort: String, message: Any) => portSend(outPort, message)
           }
         }
         
-        def portReceive(message: Any, portName: String) = {
-          val t = (message, portName)
+        def portReceive(portName: String, message: Any) = {
+          val t = (portName, message: Any)
           probe.tell(t, self)
         }
       }
       
       val probe1 = TestProbe()
+      val probe2 = TestProbe()
       val myDeviceAgent1 = system.actorOf(Props(new MyDeviceAgent()), "myDeviceAgent1")
       val myDeviceAgent2 = system.actorOf(Props(new MyDeviceAgent()), "myDeviceAgent2")
+      //  (myDeviceAgent1, "out1") --> (myDeviceAgent2, "in2")
       (myDeviceAgent1, "out1") >>+ (myDeviceAgent2, "in2")
       (myDeviceAgent2, "in2") <<+ (myDeviceAgent1, "out1")
       
-      fail
+      myDeviceAgent1 ! probe1.ref
+      myDeviceAgent2 ! probe2.ref
+      
+      myDeviceAgent1 ! ("out1", "message to in2")
+      probe2.expectMsg(("in2", "message to in2"))
+      
     }
   }
 }

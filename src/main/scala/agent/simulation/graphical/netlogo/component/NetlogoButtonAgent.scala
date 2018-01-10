@@ -14,13 +14,16 @@ object ButtonModel {
   def apply(params: GraphicalParam, name: String, size: Int = 150, forever: Boolean = false) = new ButtonModel(params, name, size, forever)
 }
 
-
-class NetlogoButtonAgent (buttonModel: ButtonModel) extends NetlogoAgentComponent(buttonModel) with Simple {
+/**
+ * A netlogo button agent
+ */
+class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = 1000)(fps: Int = 30) extends NetlogoAgentComponent(buttonModel)(maxTicks)(fps) with Simple {
   
   def setup = {}
   
   def buttonPressedHandle = {}
   def buttonReleasedHandle = {}
+  def check = {}
   
     override final def runNetlogo = {
      val eps = 20
@@ -32,11 +35,17 @@ class NetlogoButtonAgent (buttonModel: ButtonModel) extends NetlogoAgentComponen
         frame.setResizable(false)
         comp.openFromSource("button", "", modelButton)
         comp.listenerManager.addListener(new NetlogoSimpleListener {
-          override def buttonPressed(buttonName: String) = buttonPressedHandle
+          override def buttonPressed(buttonName: String) = {
+            buttonPressedHandle
+          }
          
-          override def buttonStopped(buttonName: String) = buttonReleasedHandle
+          override def buttonStopped(buttonName: String) = {
+            buttonReleasedHandle
+
+          }
         })
       }
+
     }
   
   def receive = {
@@ -44,9 +53,12 @@ class NetlogoButtonAgent (buttonModel: ButtonModel) extends NetlogoAgentComponen
   }
   
   def modelButton : String = {s"""
-
+to setup
+  clear-ticks
+  reset-ticks
+end
 to go
-
+${if(buttonModel.forever) " tick" else ""}
 end
 @#$$#@#$$#@
 GRAPHICS-WINDOW

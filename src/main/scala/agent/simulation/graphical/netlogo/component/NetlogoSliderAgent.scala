@@ -13,9 +13,12 @@ class SliderModel(params: GraphicalParam, val name: String, val size: Int, val d
 object SliderModel {
   def apply(params: GraphicalParam, name: String, size: Int = 300, defaultValue:Int = 50, minValue:Int = 0, maxValue:Int = 100) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
 }
-
-class NetlogoSliderAgent(sliderModel: SliderModel) extends NetlogoAgentComponent(sliderModel) with Simple {
+/**
+ * A netlogo slider agent
+ */
+class NetlogoSliderAgent(sliderModel: SliderModel) extends NetlogoAgentComponentNoFps(sliderModel) with Simple {
   def setup = {}
+  /**This method is called every time an event is triggered by the slider*/
   def sliderHandle(value: Double, min: Double, increment: Double, max: Double, buttonReleased: Boolean) = {}
   
   override final def runNetlogo = {

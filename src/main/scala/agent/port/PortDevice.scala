@@ -61,7 +61,7 @@ trait PortDevice extends Actor{
     
   override final def receive = {
     case PortMessage(message, outPort, inPort)  => if(isIn(In(sender, inPort, outPort )))
-                                                      portReceive(message, inPort)
+                                                      portReceive(inPort, message)
     case in: In => this +< in
     case out: Out => this +> out
     case IsIn(in) => sender ! isIn(in)
@@ -71,9 +71,9 @@ trait PortDevice extends Actor{
   /**receive method for message that are not sent on a port*/
   def normalReceive(x: Any, sender: ActorRef)
   /**receive method for message that are sent on a port*/
-  def portReceive(message: Any, portName: String)
+  def portReceive(portName: String, message: Any)
   /**send method for message associated with an port(out)*/
-  final def portSend(message: Any, portName: String) = {
+  final def portSend(portName: String, message: Any) = {
     outPorts.get(portName) match {
       case None => ???
       case Some(listActor) => listActor.foreach { case (actor, inPort) => actor ! PortMessage(message, portName, inPort) }
