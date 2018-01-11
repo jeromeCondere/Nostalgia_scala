@@ -19,8 +19,8 @@ Add fonction that generates parts of .nlogo file (slider, button, switch, etc.)
 - Add SetAgent  
 
 ### Tests
-- Correct tests on portAgent
--- Fails when a test from before (behavior)  fails
+- Test that when netlogoAgent ticks *maxticks* times, a finished message is sended
+
 
 ### Example
 
