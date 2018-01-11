@@ -6,7 +6,7 @@ import agent.simulation.graphical._
 import agent._
 import org.nlogo.core.CompilerException
 
-class myButtonConnectedAgent1(buttonModel: ButtonModel)(val cmd: String) extends NetlogoButtonAgent(buttonModel)()(4) with Simple {
+class myButtonConnectedAgent2(buttonModel: ButtonModel)(val cmd: String) extends NetlogoButtonAgent(buttonModel)()(4) with Simple {
   
   override def setup = {}
  
@@ -23,7 +23,7 @@ class myButtonConnectedAgent1(buttonModel: ButtonModel)(val cmd: String) extends
   }
 }
 
-class myNetlogoAgent1(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(100000)() with Simple {
+class myNetlogoAgent2(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(100000)() with Simple {
   
   def receive = {
     case "run" => run
@@ -40,28 +40,27 @@ class myNetlogoAgent1(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoM
       frame.setVisible(true)
       comp.open(netlogoModel.path)   
     }
-    cmd("setup")
   }
   override def check = {}
   override def setup = {}
 }
 
-object ButtonConnectedNetlogo1 extends App {
-  val graphicalParamsButton1 = GraphicalParam((100,100))
+object ButtonConnectedNetlogo2 extends App {
+    val graphicalParamsButton1 = GraphicalParam((100,100))
   val graphicalParamsButton2 = GraphicalParam((200,200))
-  val cmd1 = "go"
-  val cmd2 = "setup"
+  val cmd1 = "setup-empty"
+  val cmd2 = "setup-full"
   
-  val buttonModel1 = ButtonModel(graphicalParamsButton1, cmd1, 150, true)
+  val buttonModel1 = ButtonModel(graphicalParamsButton1, cmd1)
   val buttonModel2 = ButtonModel(graphicalParamsButton2, cmd2)
   
   val graphicalParamsNet = GraphicalParam((300,300), (700,600))
-  val netlogoModel = NetlogoModel(graphicalParamsNet, "src/example/scala/netlogo/button/Fire_connected.nlogo")
+  val netlogoModel = NetlogoModel(graphicalParamsNet, "src/example/scala/netlogo/button/Ethnocentrism_connected.nlogo")
   
   val system = ActorSystem("mySystem")
-  val myButton1 = system.actorOf(Props(new myButtonConnectedAgent1(buttonModel1)(cmd1)), "myButton1")
-  val myButton2 = system.actorOf(Props(new myButtonConnectedAgent1(buttonModel2)(cmd2)), "myButton2")
-  val myNetlogo = system.actorOf(Props(new myNetlogoAgent1(netlogoModel)), "myNetlogo")
+  val myButton1 = system.actorOf(Props(new myButtonConnectedAgent2(buttonModel1)(cmd1)), "myButton1")
+  val myButton2 = system.actorOf(Props(new myButtonConnectedAgent2(buttonModel2)(cmd2)), "myButton2")
+  val myNetlogo = system.actorOf(Props(new myNetlogoAgent2(netlogoModel)), "myNetlogo")
   
   myButton1 ! "run"
   myButton2 ! "run"

@@ -17,7 +17,7 @@ object ButtonModel {
 /**
  * A netlogo button agent
  */
-class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = 1000)(fps: Int = 30) extends NetlogoAgentComponent(buttonModel)(maxTicks)(fps) with Simple {
+class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = 1000)(fps: Float = 30f) extends NetlogoAgentComponent(buttonModel)(maxTicks)(fps) with Simple {
   
   def setup = {}
   
@@ -35,40 +35,40 @@ class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = 1000)(fps: In
         frame.setResizable(false)
         comp.openFromSource("button", "", modelButton)
         comp.listenerManager.addListener(new NetlogoSimpleListener {
-          override def buttonPressed(buttonName: String) = {
-            buttonPressedHandle
-          }
+          override def buttonPressed(buttonName: String) = buttonPressedHandle
          
-          override def buttonStopped(buttonName: String) = {
-            buttonReleasedHandle
-
-          }
-        })
+          override def buttonStopped(buttonName: String) = buttonReleasedHandle
+          })
       }
-
+      if(buttonModel.forever)
+         cmd("setup")
     }
   
   def receive = {
     case Run => run
   }
-  
+  // If not when the netlogo windows is not in the frame the ticks goes forever
+  def tickAction = s"""
+wait ${1.0f/fps}
+tick
+"""
   def modelButton : String = {s"""
 to setup
   clear-ticks
   reset-ticks
 end
 to go
-${if(buttonModel.forever) " tick" else ""}
+${if(buttonModel.forever) tickAction else ""}
 end
 @#$$#@#$$#@
 GRAPHICS-WINDOW
-10
-166
-255
-214
-16
-1
-5.7
+689
+412
+730
+454
+-1
+-1
+1.0
 1
 10
 1
@@ -80,10 +80,10 @@ GRAPHICS-WINDOW
 1
 -16
 16
--1
+-16
+16
 1
-0
-0
+1
 1
 ticks
 $fps
