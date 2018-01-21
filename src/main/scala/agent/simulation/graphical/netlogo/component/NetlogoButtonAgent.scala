@@ -5,19 +5,20 @@ import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
 import org.nlogo.api.Version
+import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
 
 class ButtonModel(params: GraphicalParam, val name: String, val size: Int, val forever: Boolean, x: Any*) extends NetlogoModel(params,"", x) {
   
 }
 
 object ButtonModel {
-  def apply(params: GraphicalParam, name: String, size: Int = 150, forever: Boolean = false) = new ButtonModel(params, name, size, forever)
+  def apply(params: GraphicalParam, name: String, size: Int = NC.DEFAULT_BUTTON_SIZE, forever: Boolean = NC.DEFAULT_BUTTON_FOREVER) = new ButtonModel(params, name, size, forever)
 }
 
 /**
  * A netlogo button agent
  */
-class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = 1000)(fps: Float = 30f) extends NetlogoAgentComponent(buttonModel)(maxTicks)(fps) with Simple {
+class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = NC.DEFAULT_MAX_TICKS)(fps: Float = NC.DEFAULT_FPS) extends NetlogoAgentComponent(buttonModel)(maxTicks)(fps) with Simple {
   
   def setup = {}
   

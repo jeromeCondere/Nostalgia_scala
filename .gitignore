@@ -10,3 +10,4 @@ project/project/
 src/main/scala/Main.scala
 *.jar
 *.nlogo
+!src/example/scala/netlogo/*.nlogo

@@ -19,7 +19,7 @@ import java.awt.Point
 import org.nlogo.lite.InterfaceComponent
 
 /**A class used to create a classic netlogoAgent that run the model .nlogo file*/
-abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = 1000)(val fps: Float = 30f) extends GraphicalAgent(netlogoModel) {
+abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = NetlogoConstants.DEFAULT_MAX_TICKS)(val fps: Float = NetlogoConstants.DEFAULT_FPS) extends GraphicalAgent(netlogoModel) {
   protected  val frame = new javax.swing.JFrame
   protected  val comp = new InterfaceComponent(frame)
 

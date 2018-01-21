@@ -5,13 +5,14 @@ import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
 import org.nlogo.api.Version
+import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
 
-class SliderModel(params: GraphicalParam, val name: String, val size: Int, val defaultValue:Int, val minValue:Int, val maxValue:Int, x: Any*) extends NetlogoModel(params,"", x) {
+class SliderModel(params: GraphicalParam, val name: String, val size: Int, val defaultValue:Float, val minValue:Float, val maxValue:Float, x: Any*) extends NetlogoModel(params,"", x) {
   
 }
 
 object SliderModel {
-  def apply(params: GraphicalParam, name: String, size: Int = 300, defaultValue:Int = 50, minValue:Int = 0, maxValue:Int = 100) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
+  def apply(params: GraphicalParam, name: String, size: Int = NC.DEFAULT_SLIDER_SIZE, defaultValue:Float = NC.DEFAULT_SLIDER_VALUE, minValue:Float = NC.DEFAULT_SLIDER_MIN_VALUE, maxValue:Float = NC.DEFAULT_SLIDER_MAX_VALUE) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
 }
 /**
  * A netlogo slider agent
