@@ -12,7 +12,7 @@ class SliderModel(params: GraphicalParam, val name: String, val size: Int, val d
 }
 
 object SliderModel {
-  def apply(params: GraphicalParam, name: String, size: Int = NC.DEFAULT_SLIDER_SIZE, defaultValue:Float = NC.DEFAULT_SLIDER_VALUE, minValue:Float = NC.DEFAULT_SLIDER_MIN_VALUE, maxValue:Float = NC.DEFAULT_SLIDER_MAX_VALUE) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
+  def apply(params: GraphicalParam, name: String, size: Int = NC.DEFAULT_SLIDER_SIZE, defaultValue: Float = NC.DEFAULT_SLIDER_VALUE, minValue: Float = NC.DEFAULT_SLIDER_MIN_VALUE, maxValue: Float = NC.DEFAULT_SLIDER_MAX_VALUE) = new SliderModel(params, name, size, defaultValue, minValue, maxValue)
 }
 /**
  * A netlogo slider agent
@@ -37,10 +37,6 @@ class NetlogoSliderAgent(sliderModel: SliderModel) extends NetlogoAgentComponent
         }
       })
     }
-  }
-  
-  def receive = {
-    case Run => run
   }
    
   def modelSlider = {s"""

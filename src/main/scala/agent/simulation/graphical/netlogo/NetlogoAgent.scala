@@ -43,7 +43,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
       new Runnable() { def run() { block } } 
     ) 
   }
-  
+  /**Runs the netlogo model*/
   final def run = {
    val eps = 5
    implicit val timeout = Timeout((maxTicks + eps)/fps seconds)

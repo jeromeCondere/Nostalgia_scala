@@ -45,9 +45,6 @@ class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = NC.DEFAULT_MA
          cmd("setup")
     }
   
-  def receive = {
-    case Run => run
-  }
   // If not when the netlogo windows is not in the frame the ticks goes forever
   def tickAction = s"""
 wait ${1.0f/fps}
