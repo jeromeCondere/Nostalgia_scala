@@ -13,7 +13,7 @@ class mySwitchAgent(switchModel: SwitchModel) extends NetlogoSwitchAgent(switchM
 
 object SwitchNetlogo extends App {
   val graphicalParams = GraphicalParam((0,0))
-  val switchModel = SwitchModel(graphicalParams, "my_switch", 100, false)
+  val switchModel = SwitchModel(graphicalParams, "my_switch")
   
   val system = ActorSystem("mySystem")
   val myNetlogo = system.actorOf(Props(new mySwitchAgent(switchModel)), "mySwitchAgent")

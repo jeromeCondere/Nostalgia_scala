@@ -16,7 +16,7 @@ object NetlogoConstants {
   val DEFAULT_SLIDER_MAX_VALUE = 100f
   
   //
-  val DEFAULT_SWITCH_SIZE = 110
+  val DEFAULT_SWITCH_SIZE = 130
   val DEFAULT_SWITCH_VALUE = false
   
   
