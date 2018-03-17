@@ -14,7 +14,7 @@ import scala.reflect._
  */
 class ParralelBehavior[A <: AbstractBehavior : ClassTag](behaviorProxyList:List[BehaviorProxy[A]]) extends ComplexBehavior(() => {}){
  
-  private var behaviorsNotFinished: List[String]   = List()
+  private var behaviorsNotFinished: List[String] = List()
   
   /** setup all Behaviors */
   override final protected def init = {
