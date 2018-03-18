@@ -46,10 +46,11 @@ class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = NC.DEFAULT_MA
     }
   
   // If not when the netlogo windows is not in the frame the ticks goes forever
-  def tickAction = s"""
+  def tickAction = {s"""
 wait ${1.0f/fps}
 tick
 """
+  }
   def modelButton : String = {s"""
 to setup
   clear-ticks

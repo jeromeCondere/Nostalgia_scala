@@ -1,6 +1,7 @@
 package agent.simulation.graphical.netlogo
 
 object NetlogoConstants {
+
   val DEFAULT_FPS = 30f
   val DEFAULT_MAX_TICKS = 1000
   
@@ -28,6 +29,5 @@ object NetlogoConstants {
   val DEFAULT_PLOT_XMAX = 100
   val DEFAULT_PLOT_YMIN = 0
   val DEFAULT_PLOT_YMAX = 100
-  
   
 }

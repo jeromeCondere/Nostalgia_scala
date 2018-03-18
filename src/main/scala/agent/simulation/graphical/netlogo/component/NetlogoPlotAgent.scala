@@ -19,7 +19,7 @@ case class PlotMetaData(
           NC.DEFAULT_PLOT_YMIN,
           NC.DEFAULT_PLOT_YMAX
         ),
-    labels: PlotLabels = PlotLabels("x","y")
+    labels: PlotLabels = PlotLabels(NC.DEFAULT_PLOT_XLABEL,NC.DEFAULT_PLOT_YLABEL)
 )
 
 class PlotModel(params: GraphicalParam, val name: String, val width: Int, val height: Int, val metadata: PlotMetaData,x: Any*) extends NetlogoModel(params,"", x) {
@@ -56,9 +56,9 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
     }
     pensStr
   }
-  private def stringOrNil(s: String) = if(s.isEmpty) s else "NIL"
+  private def stringOrNil(s: String) = if(s.isEmpty) "NIL" else s
   override final def runNetlogo = {
-     val eps = 20
+     val eps = 40
      wait {
         frame.setSize(plotModel.width + eps, plotModel.height + eps)
         frame.setLocation(new Point(plotModel.params.pos._1, plotModel.params.pos._2))
@@ -66,6 +66,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
         frame.setVisible(true)
         frame.setResizable(false)
         comp.openFromSource("plot", "", modelPlot)
+        println(modelPlot)
       }
       cmd("setup")
     }
@@ -81,10 +82,10 @@ to go
 end
 @#$$#@#$$#@
 GRAPHICS-WINDOW
-10
-166
-255
-214
+9000
+9000
+9200
+9200
 16
 1
 5.7
