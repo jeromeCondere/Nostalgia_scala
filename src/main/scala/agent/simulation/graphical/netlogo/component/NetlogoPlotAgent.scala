@@ -52,7 +52,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
   def pensPlot = {
     var pensStr = ""
     pens.zipWithIndex.foreach{
-      case(p,i) => pensStr += s""" "${plotModel.name+"_pen"+i}" 1.0 0 -16777216 true "" "${p.updateCommand}"\n"""
+      case(p,i) => pensStr += s""""${plotModel.name+"_pen"+i}" 1.0 0 -16777216 true "" "${p.updateCommand}"\n"""
     }
     pensStr
   }
@@ -67,6 +67,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
         frame.setResizable(false)
         comp.openFromSource("plot", "", modelPlot)
       }
+     print(modelPlot)
       cmd("setup")
     }
     def modelPlot = {s"""
