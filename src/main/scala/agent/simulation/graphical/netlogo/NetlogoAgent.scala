@@ -17,6 +17,8 @@ import scala.util.{Success, Failure}
 import java.awt.Point
 
 import org.nlogo.lite.InterfaceComponent
+import org.nlogo.core.CompilerException
+import org.nlogo.api.LogoException
 
 /**A class used to create a classic netlogoAgent that run the model .nlogo file*/
 abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = NetlogoConstants.DEFAULT_MAX_TICKS)(val fps: Float = NetlogoConstants.DEFAULT_FPS) extends GraphicalAgent(netlogoModel) {
@@ -24,7 +26,18 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   protected  val comp = new InterfaceComponent(frame)
 
   final def cmd(cmdString: String) = comp.command(cmdString)
-  final def report(reportString: String) = comp.report(reportString)
+  
+  @throws(classOf[CompilerException])
+  @throws(classOf[LogoException])
+  final def report(reportString: String): AnyRef = {
+    try {
+      val res = comp.report(reportString)
+      return res
+    } catch {
+      case compilerException: CompilerException => throw compilerException
+      case logoException: LogoException => throw logoException
+    }
+  }
   
   def runNetlogo = {
     wait {
