@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo.NetlogoModel
 import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
+import java.net.URI
 import org.nlogo.api.Version
 import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
 
@@ -65,7 +66,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
         frame.add(comp)
         frame.setVisible(true)
         frame.setResizable(false)
-        comp.openFromSource("plot", "", modelPlot)
+        comp.openFromURI(new URI(modelPlot))
       }
       cmd("setup")
     }

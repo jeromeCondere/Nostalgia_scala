@@ -4,8 +4,10 @@ import agent.simulation.graphical.netlogo.NetlogoModel
 import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
+import java.net.URI
 import org.nlogo.api.Version
 import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
+
 
 class ButtonModel(params: GraphicalParam, val name: String, val size: Int, val forever: Boolean, x: Any*) extends NetlogoModel(params,"", x) {
   
@@ -34,7 +36,7 @@ class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = NC.DEFAULT_MA
         frame.add(comp)
         frame.setVisible(true)
         frame.setResizable(false)
-        comp.openFromSource("button", "", modelButton)
+        comp.openFromURI(new URI(modelButton))
         comp.listenerManager.addListener(new NetlogoSimpleListener {
           override def buttonPressed(buttonName: String) = buttonPressedHandle
          

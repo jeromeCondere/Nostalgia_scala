@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo.NetlogoModel
 import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
+import java.net.URI
 import org.nlogo.api.Version
 import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
 
@@ -30,7 +31,7 @@ class NetlogoSliderAgent(sliderModel: SliderModel) extends NetlogoAgentComponent
       frame.add(comp)
       frame.setVisible(true)
       frame.setResizable(false)
-      comp.openFromSource("slider", "", modelSlider)
+      comp.openFromURI(new URI(modelSlider))
       comp.listenerManager.addListener(new NetlogoSimpleListener {
         override def sliderChanged(name: String, value: Double, min: Double, increment: Double, max: Double, valueChanged: Boolean, buttonReleased: Boolean) = {
           sliderHandle(value, min, increment, max, buttonReleased)

@@ -29,10 +29,9 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   
   @throws(classOf[CompilerException])
   @throws(classOf[LogoException])
-  final def report(reportString: String): AnyRef = {
+  final def report(source: String): AnyRef = {
     try {
-      val res = comp.report(reportString)
-      return res
+      return comp.report(source)
     } catch {
       case compilerException: CompilerException => throw compilerException
       case logoException: LogoException => throw logoException

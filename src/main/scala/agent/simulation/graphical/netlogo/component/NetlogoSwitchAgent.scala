@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo.NetlogoModel
 import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
+import java.net.URI
 import org.nlogo.api.Version
 import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
 
@@ -31,7 +32,7 @@ class NetlogoSwitchAgent(switchModel: SwitchModel) extends NetlogoAgentComponent
       frame.add(comp)
       frame.setVisible(true)
       frame.setResizable(false)
-      comp.openFromSource("switch", "", modelSwitch)
+      comp.openFromURI(new URI(modelSwitch))
       comp.listenerManager.addListener(new NetlogoSimpleListener {
         override def switchChanged(name: String, value: Boolean, valueChanged: Boolean) = {
           switchHandle(value)
