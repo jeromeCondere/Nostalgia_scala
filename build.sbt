@@ -22,7 +22,7 @@ lazy val examples = (project in file("examples")).
     libraryDependencies ++= akka,
     libraryDependencies ++= asm,
     unmanagedBase := (unmanagedBase in nostalgia).value,
-    scalaSource := baseDirectory.value / "src / scala",
+    scalaSource in Compile := baseDirectory.value / "src/scala/",
     test / aggregate := false
   ).dependsOn(nostalgia)
 

@@ -30,7 +30,7 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
     print("issou")
     try {
       val mt = report("burned-trees")
-      println("issoud")
+      println("issouhvd")
     } catch {
       case e: Exception  => println("problem")
     }
