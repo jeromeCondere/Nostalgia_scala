@@ -1,31 +1,31 @@
-name := "nostalgia_scala"
+import Dependencies._
 
-version := "0.0.1"
-
-scalaVersion := "2.12.2"
-
-libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2-core" % "3.8.6" % "test",
-  "com.typesafe.akka" %% "akka-actor" % "2.4.16",
-  "com.typesafe.akka" %% "akka-slf4j"   % "2.4.16",
-  "com.typesafe.akka" %% "akka-remote"  % "2.4.16",
-  "com.typesafe.akka" %% "akka-agent"   % "2.4.16",
-  "com.typesafe.akka" %% "akka-testkit" % "2.4.16" % "test"
+lazy val commonSettings = Seq(
+   	scalaVersion := "2.12.3",
+   	version      := "0.0.1"
 )
 
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+lazy val nostalgia = (project in file("nostalgia"))
+  .settings(
+    commonSettings,
+    organization := "org.nostalgia",
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies ++= akka,
+    libraryDependencies ++= asm,
+  )
 
+lazy val examples = (project in file("examples")).
+  settings(
+	commonSettings,
+	organization := "org.nostalgia.examples",
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies ++= akka,
+    libraryDependencies ++= asm,
+    unmanagedBase := (unmanagedBase in nostalgia).value,
+    scalaSource := baseDirectory.value / "src / scala",
+    test / aggregate := false
+  ).dependsOn(nostalgia)
 
-//netlogo version 6.0.0 M4
-
-
-//netlogo dependencies
-libraryDependencies += "org.ow2.asm" % "asm" % "5.0.3"
-libraryDependencies += "org.ow2.asm" % "asm-all" % "5.0.4"
-libraryDependencies += "org.ow2.asm" % "asm-analysis" % "5.0.3"
-libraryDependencies += "org.ow2.asm" % "asm-tree" % "5.0.3"
-libraryDependencies += "org.ow2.asm" % "asm-util" % "5.0.3"
-
-
-
+lazy val root = (project in file(".")).
+  aggregate(nostalgia, examples)
+  
