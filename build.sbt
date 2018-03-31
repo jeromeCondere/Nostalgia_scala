@@ -23,9 +23,13 @@ lazy val examples = (project in file("examples")).
     libraryDependencies ++= asm,
     unmanagedBase := (unmanagedBase in nostalgia).value,
     scalaSource in Compile := baseDirectory.value / "src/scala/",
+    resourceDirectory in Compile := baseDirectory.value / "resources",
     test / aggregate := false
   ).dependsOn(nostalgia)
 
 lazy val root = (project in file(".")).
-  aggregate(nostalgia, examples)
+  aggregate(nostalgia, examples).
+  settings(
+    sourcesInBase := false
+  )
   

@@ -48,7 +48,7 @@ object PlotNetlogoConnected extends App {
   val plotConnectedModel = PlotModel(graphicalPlotParams, "my_plot_connected")
   
   val graphicalParams = GraphicalParam((0,0), (500,500))
-  val netlogoModel = NetlogoModel(graphicalParams, "Fire.nlogo")
+  val netlogoModel = NetlogoModel(graphicalParams, getClass.getResource("netlogo/Fire.nlogo").getPath)
   
   val system = ActorSystem("mySystem")
   val myplot = system.actorOf(Props(new myPlotConnectedAgent(plotConnectedModel)), "myPlotConnectedAgent")

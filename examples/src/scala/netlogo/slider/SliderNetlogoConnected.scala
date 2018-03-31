@@ -63,7 +63,7 @@ object SliderNetlogoConnected  extends App{
   val sliderModel = SliderModel(graphicalParamsSlider, "density")
   
   val graphicalParamsNet = GraphicalParam((300,300), (700,600))
-  val netlogoModel = NetlogoModel(graphicalParamsNet, "src/example/scala/netlogo/slider/Fire_connected.nlogo")
+  val netlogoModel = NetlogoModel(graphicalParamsNet, getClass.getResource("netlogo/slider/Fire_connected.nlogo").getPath)
   
   val system = ActorSystem("mySystem")
   val mySlider = system.actorOf(Props(new mySliderConnectedAgent(sliderModel)), "mySlider")
