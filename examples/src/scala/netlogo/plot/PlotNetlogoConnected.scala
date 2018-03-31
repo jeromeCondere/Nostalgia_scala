@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
+import scala.io.StdIn
 
 class myPlotConnectedAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)(1000)(5) with Simple {
   addPlotPens(PlotPen("plot a * 0.2"))
@@ -41,6 +42,8 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
 }
 
 object PlotNetlogoConnected extends App {
+  println(">>> Press ENTER to exit <<<")
+
   val graphicalPlotParams = GraphicalParam((0,0))
   val plotConnectedModel = PlotModel(graphicalPlotParams, "my_plot_connected")
   
@@ -54,4 +57,7 @@ object PlotNetlogoConnected extends App {
   myNetlogo ! myplot  
   //myplot ! Run
   myNetlogo ! Run
+
+  try StdIn.readLine
+  finally system.terminate
 }

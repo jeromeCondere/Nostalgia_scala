@@ -3,6 +3,7 @@ import akka.actor._
 import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical._
 import agent.Simple
+import scala.io.StdIn
 
 class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(1000)(30) with Simple {
   def receive = {
@@ -14,6 +15,8 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
 }
 
 object SimpleNetlogo extends App {
+  println(">>> Press ENTER to exit <<<")
+
   val graphicalParams = GraphicalParam((0,0), (500,500))
   val netlogoModel = NetlogoModel(graphicalParams, "Fire.nlogo")
   
@@ -21,4 +24,7 @@ object SimpleNetlogo extends App {
   val myNetlogo = system.actorOf(Props(new myNetlogoAgent(netlogoModel)), "myNetlogo")
  
   myNetlogo ! "run"
+  
+  try StdIn.readLine
+  finally system.terminate
 }

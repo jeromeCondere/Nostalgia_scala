@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
+import scala.io.StdIn
 
 class myButtonAgent(buttonModel: ButtonModel) extends NetlogoButtonAgent(buttonModel)()() with Simple {
   
@@ -13,6 +14,9 @@ class myButtonAgent(buttonModel: ButtonModel) extends NetlogoButtonAgent(buttonM
 }
 
 object ButtonNetlogo extends App {
+  println(">>> Press ENTER to exit <<<")
+  import scala.io.StdIn
+  
   val graphicalParams = GraphicalParam((0,0))
   val buttonModel = ButtonModel(graphicalParams, "my_button", 100, false)
   
@@ -20,4 +24,8 @@ object ButtonNetlogo extends App {
   val myNetlogo = system.actorOf(Props(new myButtonAgent(buttonModel)), "myButtonAgent")
  
   myNetlogo ! Run
+
+
+  try StdIn.readLine
+  finally system.terminate
 }

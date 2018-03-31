@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
+import scala.io.StdIn
 
 class mySwitchAgent(switchModel: SwitchModel) extends NetlogoSwitchAgent(switchModel) with Simple {
   
@@ -12,6 +13,8 @@ class mySwitchAgent(switchModel: SwitchModel) extends NetlogoSwitchAgent(switchM
 }
 
 object SwitchNetlogo extends App {
+  println(">>> Press ENTER to exit <<<")
+
   val graphicalParams = GraphicalParam((0,0))
   val switchModel = SwitchModel(graphicalParams, "my_switch")
   
@@ -19,4 +22,7 @@ object SwitchNetlogo extends App {
   val myNetlogo = system.actorOf(Props(new mySwitchAgent(switchModel)), "mySwitchAgent")
  
   myNetlogo ! Run
+
+  try StdIn.readLine
+  finally system.terminate
 }

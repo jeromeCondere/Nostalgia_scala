@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
+import scala.io.StdIn
 /*
  * A simple slider example:
  * Every time the slider is moved the value is printed
@@ -16,6 +17,8 @@ class mySliderAgent(sliderModel: SliderModel) extends NetlogoSliderAgent(sliderM
 }
 
 object SliderNetlogo extends App {
+  println(">>> Press ENTER to exit <<<")
+
   val graphicalParams = GraphicalParam((0,0))
   val sliderModel = SliderModel(graphicalParams, "my_slider")
   
@@ -23,4 +26,7 @@ object SliderNetlogo extends App {
   val mySlider = system.actorOf(Props(new mySliderAgent(sliderModel)), "mySliderAgent")
  
   mySlider ! Run
+  
+  try StdIn.readLine
+  finally system.terminate
 }

@@ -5,6 +5,7 @@ import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
 import org.nlogo.core.CompilerException
+import scala.io.StdIn
 
 class myButtonConnectedAgent2(buttonModel: ButtonModel)(val cmd: String) extends NetlogoButtonAgent(buttonModel)()(4) with Simple {
   
@@ -46,7 +47,9 @@ class myNetlogoAgent2(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoM
 }
 
 object ButtonConnectedNetlogo2 extends App {
-    val graphicalParamsButton1 = GraphicalParam((100,100))
+  println(">>> Press ENTER to exit <<<")
+  
+  val graphicalParamsButton1 = GraphicalParam((100,100))
   val graphicalParamsButton2 = GraphicalParam((200,200))
   val cmd1 = "setup-empty"
   val cmd2 = "setup-full"
@@ -69,4 +72,8 @@ object ButtonConnectedNetlogo2 extends App {
   myButton2 ! myNetlogo
   
   myNetlogo ! "run"
+
+
+  try StdIn.readLine
+  finally system.terminate
 }

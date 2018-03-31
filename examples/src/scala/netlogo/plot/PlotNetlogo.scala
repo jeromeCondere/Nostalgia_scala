@@ -4,6 +4,7 @@ import agent.simulation.graphical.netlogo._
 import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
+import scala.io.StdIn
 
 class myPlotAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)()() with Simple {
   
@@ -12,6 +13,8 @@ class myPlotAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)()() 
 }
 
 object PlotNetlogo extends App {
+  println(">>> Press ENTER to exit <<<")
+
   val graphicalParams = GraphicalParam((0,0))
   val plotModel = PlotModel(graphicalParams, "my_plot")
   
@@ -19,4 +22,7 @@ object PlotNetlogo extends App {
   val myNetlogo = system.actorOf(Props(new myPlotAgent(plotModel)), "myPlotAgent")
  
   myNetlogo ! Run
+
+  try StdIn.readLine
+  finally system.terminate
 }

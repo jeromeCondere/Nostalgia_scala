@@ -7,6 +7,7 @@ import scala.concurrent._;
 import scala.util.{Success, Failure}
 import akka.util.Timeout
 import scala.concurrent.duration._
+import scala.io.StdIn
 
 class SortedListAgent(val l: List[Int]) extends ListAgent(l.sortWith((a,b) => a < b)) {
   
@@ -26,6 +27,8 @@ object ListSort extends App {
   implicit val timeout = Timeout(2 seconds)
   import ExecutionContext.Implicits.global
   
+  println(">>> Press ENTER to exit <<<")
+
   val system = ActorSystem("mySystem")
   val myActorSortedList = system.actorOf(Props(new SortedListAgent(List(1,9,6))), "myActorSortedList")
   val myActorSortedList2 = system.actorOf(Props(new SortedListAgent(List(11,-9,5))), "myActorSortedList2")
@@ -35,5 +38,9 @@ object ListSort extends App {
     case Success(v) => v ! Foreach(println)
     case Failure(e) => print(e.getMessage)
   }
+
+  
+  try StdIn.readLine
+  finally system.terminate
   
 }

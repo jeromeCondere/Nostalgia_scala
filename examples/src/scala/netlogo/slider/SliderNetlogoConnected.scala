@@ -5,7 +5,7 @@ import agent.simulation.graphical.netlogo.component._
 import agent.simulation.graphical._
 import agent._
 import org.nlogo.core.CompilerException
-
+import scala.io.StdIn
 /*
  * A simple model of a slider agent connected to a normal netlogo agent
  * The slider agent controls the density parameter of the netlogo agent
@@ -57,6 +57,8 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
 }
 
 object SliderNetlogoConnected  extends App{
+  println(">>> Press ENTER to exit <<<")
+  
   val graphicalParamsSlider = GraphicalParam((100,100))
   val sliderModel = SliderModel(graphicalParamsSlider, "density")
   
@@ -77,5 +79,8 @@ object SliderNetlogoConnected  extends App{
   mySlider ! "default"
   mySlider ! "run"
   myNetlogo ! "run"
+  
+  try StdIn.readLine
+  finally system.terminate
   
 }
