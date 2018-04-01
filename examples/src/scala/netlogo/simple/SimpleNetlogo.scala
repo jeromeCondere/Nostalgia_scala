@@ -16,9 +16,8 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
 
 object SimpleNetlogo extends App {
   println(">>> Press ENTER to exit <<<")
-  println(getClass.getResource("netlogo/Fire.nlogo"))
   val graphicalParams = GraphicalParam((0,0), (500,500))
-  val netlogoModel = NetlogoModel(graphicalParams, getClass.getResource("netlogo/Fire.nlogo").getPath)
+  val netlogoModel = NetlogoModel(graphicalParams, "examples/resources/netlogo/Fire.nlogo")
   
   val system = ActorSystem("mySystem")
   val myNetlogo = system.actorOf(Props(new myNetlogoAgent(netlogoModel)), "myNetlogo")

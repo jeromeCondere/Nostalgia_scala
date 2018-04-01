@@ -11,7 +11,7 @@ lazy val nostalgia = (project in file("nostalgia"))
     organization := "org.nostalgia",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= akka,
-    libraryDependencies ++= asm,
+    libraryDependencies ++= netlogoDependencies,
   )
 
 lazy val examples = (project in file("examples")).
@@ -20,7 +20,7 @@ lazy val examples = (project in file("examples")).
 	organization := "org.nostalgia.examples",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= akka,
-    libraryDependencies ++= asm,
+    libraryDependencies ++= netlogoDependencies,
     unmanagedBase := (unmanagedBase in nostalgia).value,
     scalaSource in Compile := baseDirectory.value / "src/scala/",
     resourceDirectory in Compile := baseDirectory.value / "resources",

@@ -5,6 +5,7 @@ import agent.simulation.graphical.netlogo.NetlogoSimpleListener
 import agent._
 import java.awt.Point
 import java.net.URI
+import java.nio.file.Paths
 import org.nlogo.api.Version
 import agent.simulation.graphical.netlogo.{NetlogoConstants => NC}
 
@@ -36,7 +37,7 @@ class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = NC.DEFAULT_MA
         frame.add(comp)
         frame.setVisible(true)
         frame.setResizable(false)
-        comp.openFromURI(new URI(modelButton))
+        comp.openFromURI(Paths.get("issou", "eud").toUri)
         comp.listenerManager.addListener(new NetlogoSimpleListener {
           override def buttonPressed(buttonName: String) = buttonPressedHandle
          

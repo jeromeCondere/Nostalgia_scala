@@ -22,7 +22,13 @@ import org.nlogo.api.LogoException
 
 /**A class used to create a classic netlogoAgent that run the model .nlogo file*/
 abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = NetlogoConstants.DEFAULT_MAX_TICKS)(val fps: Float = NetlogoConstants.DEFAULT_FPS) extends GraphicalAgent(netlogoModel) {
-  protected  val frame = new javax.swing.JFrame
+  protected  val frame = new javax.swing.JFrame 
+  frame.addWindowListener(new java.awt.event.WindowAdapter {
+    override def windowClosing(e: java.awt.event.WindowEvent) = {
+      context.parent ! agent.Finished
+    }
+  })
+  
   protected  val comp = new InterfaceComponent(frame)
 
   final def cmd(cmdString: String) = comp.command(cmdString)

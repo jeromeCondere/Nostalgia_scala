@@ -59,7 +59,7 @@ object ButtonConnectedNetlogo1 extends App {
   val buttonModel2 = ButtonModel(graphicalParamsButton2, cmd2)
   
   val graphicalParamsNet = GraphicalParam((300,300), (700,600))
-  val netlogoModel = NetlogoModel(graphicalParamsNet, getClass.getResource("netlogo/button/Fire_connected.nlogo").getPath)
+  val netlogoModel = NetlogoModel(graphicalParamsNet, "examples/resources/netlogo/button/Fire_connected.nlogo")
   
   val system = ActorSystem("mySystem")
   val myButton1 = system.actorOf(Props(new myButtonConnectedAgent1(buttonModel1)(cmd1)), "myButton1")

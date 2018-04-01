@@ -10,8 +10,8 @@ import akka.pattern.pipe
 import agent.collection._
 
 class ListAgent[A](l: List[A]) extends NostalgiaAgent {
-  implicit val timeout = Timeout(2 seconds)
-  import context.dispatcher
+ implicit val timeout = Timeout(2 seconds)
+ import context.dispatcher
   
  override def move = self
  override def collide(actor :ActorRef) = Future{self}
