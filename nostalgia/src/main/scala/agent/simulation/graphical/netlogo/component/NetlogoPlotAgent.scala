@@ -70,6 +70,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
       }
       cmd("setup")
     }
+    
     def modelPlot = {s"""
 globals [${variablesPlot}]
 
