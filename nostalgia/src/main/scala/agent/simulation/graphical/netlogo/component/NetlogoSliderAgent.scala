@@ -31,7 +31,7 @@ class NetlogoSliderAgent(sliderModel: SliderModel) extends NetlogoAgentComponent
       frame.add(comp)
       frame.setVisible(true)
       frame.setResizable(false)
-      comp.openFromURI(new URI(modelSlider))
+      comp.openFromSource("", modelSlider)
       comp.listenerManager.addListener(new NetlogoSimpleListener {
         override def sliderChanged(name: String, value: Double, min: Double, increment: Double, max: Double, valueChanged: Boolean, buttonReleased: Boolean) = {
           sliderHandle(value, min, increment, max, buttonReleased)

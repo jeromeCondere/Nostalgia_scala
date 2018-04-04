@@ -37,7 +37,8 @@ class NetlogoButtonAgent (buttonModel: ButtonModel)(maxTicks:Int = NC.DEFAULT_MA
         frame.add(comp)
         frame.setVisible(true)
         frame.setResizable(false)
-        comp.openFromURI(Paths.get("issou", "eud").toUri)
+        comp.openFromSource("", modelButton)
+
         comp.listenerManager.addListener(new NetlogoSimpleListener {
           override def buttonPressed(buttonName: String) = buttonPressedHandle
          
@@ -117,8 +118,7 @@ ${Version.version}
 @#$$#@#$$#@
 @#$$#@#$$#@
 @#$$#@#$$#@
-0
-@#$$#@#$$#@s
+@#$$#@#$$#@
 """
   }
 }

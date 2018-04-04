@@ -23,4 +23,7 @@ object Dependencies {
 	"org.ow2.asm" % "asm-tree" % "5.0.3",
 	"org.ow2.asm" % "asm-util" % "5.0.3"
  )
+ lazy val parboiled = "org.parboiled" %% "parboiled" % "2.1.3"
+
+ lazy val netlogoDependencies = asm :+ parboiled
 }

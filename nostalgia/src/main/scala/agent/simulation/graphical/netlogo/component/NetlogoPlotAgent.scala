@@ -66,7 +66,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
         frame.add(comp)
         frame.setVisible(true)
         frame.setResizable(false)
-        comp.openFromURI(new URI(modelPlot))
+        comp.openFromSource("", modelPlot)
       }
       cmd("setup")
     }

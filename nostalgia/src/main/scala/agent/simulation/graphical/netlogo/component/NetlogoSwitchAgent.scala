@@ -32,7 +32,8 @@ class NetlogoSwitchAgent(switchModel: SwitchModel) extends NetlogoAgentComponent
       frame.add(comp)
       frame.setVisible(true)
       frame.setResizable(false)
-      comp.openFromURI(new URI(modelSwitch))
+      comp.openFromSource("", modelSwitch)
+
       comp.listenerManager.addListener(new NetlogoSimpleListener {
         override def switchChanged(name: String, value: Boolean, valueChanged: Boolean) = {
           switchHandle(value)

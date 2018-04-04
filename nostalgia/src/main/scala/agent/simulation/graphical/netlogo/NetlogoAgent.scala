@@ -16,7 +16,8 @@ import scala.concurrent._;
 import scala.util.{Success, Failure}
 import java.awt.Point
 
-import org.nlogo.lite.InterfaceComponent
+//import org.nlogo.lite.InterfaceComponent
+import agent.simulation.graphical.netlogo.util.InterfaceComponent
 import org.nlogo.core.CompilerException
 import org.nlogo.api.LogoException
 

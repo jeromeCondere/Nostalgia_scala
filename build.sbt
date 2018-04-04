@@ -11,7 +11,7 @@ lazy val nostalgia = (project in file("nostalgia"))
     organization := "org.nostalgia",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= akka,
-    libraryDependencies ++= netlogoDependencies,
+    libraryDependencies ++= netlogoDependencies
   )
 
 lazy val examples = (project in file("examples")).
