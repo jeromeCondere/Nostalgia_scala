@@ -34,7 +34,8 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   
   protected  val comp = new InterfaceComponent(frame)
 
-  final def cmd(cmdString: String) = comp.command(cmdString)
+  final def cmd(source: String) = comp.command(source)
+  final def cmdLater(source: String) = comp.commandLater(source)
   
   @throws(classOf[CompilerException])
   @throws(classOf[LogoException])

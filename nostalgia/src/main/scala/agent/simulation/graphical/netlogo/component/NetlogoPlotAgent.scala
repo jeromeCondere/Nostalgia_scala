@@ -53,11 +53,13 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
   def pensPlot = {
     var pensStr = ""
     pens.zipWithIndex.foreach{
-      case(p,i) => pensStr += s""""${plotModel.name+"_pen"+i}" 1.0 0 -16777216 true "" "${p.updateCommand}"\n"""
+      case(p,i) => pensStr += s""""${plotModel.name+"_pen"+i}" 1.0 0 -16777216 false "" "${p.updateCommand}"\n"""
     }
     pensStr
   }
+
   private def stringOrNil(s: String) = if(s.isEmpty) "NIL" else s
+
   override final def runNetlogo = {
      val eps = 40
      wait {
@@ -69,13 +71,14 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
         comp.openFromSource("", modelPlot)
       }
       cmd("setup")
-    }
+      cmd("repeat "+maxTicks+" [ go ]")
+  }
     
     def modelPlot = {s"""
-globals [${variablesPlot}]
+globals [ ${variablesPlot}]
 
 to setup
- ca
+ clear-all
  reset-ticks
 end
 to go
@@ -127,7 +130,6 @@ false
 PENS
 ${pensPlot}
 
-
 @#$$#@#$$#@
 @#$$#@#$$#@
 @#$$#@#$$#@
@@ -138,9 +140,7 @@ ${Version.version}
 @#$$#@#$$#@
 @#$$#@#$$#@
 @#$$#@#$$#@
-0
 @#$$#@#$$#@
 """
   }
-  
 }

@@ -6,20 +6,20 @@ import agent.simulation.graphical._
 import agent._
 import scala.io.StdIn
 
-class myPlotConnectedAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)(1000)(5) with Simple {
-  addPlotPens(PlotPen("plot a * 0.2"))
+class myPlotConnectedAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)(120)(15) with Simple {
+  addPlotPens(PlotPen("plot a"))
   addPlotVariables("a")
   
   override  def receive = {
     case Run => run
-    case a: Int => cmd("set a "+a)
+    case a: Double => cmd("set a "+a)
     case _ => 
   }
   
   override def setup = {}
-  
+
 }
-class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(1000)(15) with Simple {
+class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(400)(15) with Simple {
  var netlogo_actor: ActorRef = _
  
   def receive = {
@@ -27,17 +27,14 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
     case a: ActorRef => netlogo_actor = a
     case _ => 
   }
+
   override def check = {
-    print("issou")
-    try {
-      val mt = report("burned-trees")
-      println("issouhvd")
-    } catch {
-      case e: Exception  => println("problem")
-    }
-    
-    //netlogo_actor ! altruists
+    val source = "count patches with [pcolor = pink]"
+    reportAndCallback(source, (altruists: AnyRef) => {
+      netlogo_actor ! altruists.asInstanceOf[Double]
+    })
   }
+
   override def setup = {}
 }
 
@@ -47,15 +44,15 @@ object PlotNetlogoConnected extends App {
   val graphicalPlotParams = GraphicalParam((0,0))
   val plotConnectedModel = PlotModel(graphicalPlotParams, "my_plot_connected")
   
-  val graphicalParams = GraphicalParam((0,0), (500,500))
-  val netlogoModel = NetlogoModel(graphicalParams, "examples/resources/netlogo/Fire.nlogo")
+  val graphicalParams = GraphicalParam((700,0), (500,500))
+  val netlogoModel = NetlogoModel(graphicalParams, "examples/resources/netlogo/plot/Altruism.nlogo")
   
   val system = ActorSystem("mySystem")
   val myplot = system.actorOf(Props(new myPlotConnectedAgent(plotConnectedModel)), "myPlotConnectedAgent")
   val myNetlogo = system.actorOf(Props(new myNetlogoAgent(netlogoModel)), "myNetlogo")
   
   myNetlogo ! myplot  
-  //myplot ! Run
+  myplot ! Run
   myNetlogo ! Run
 
   try StdIn.readLine
