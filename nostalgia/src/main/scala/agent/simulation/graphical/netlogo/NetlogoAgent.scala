@@ -18,6 +18,7 @@ import java.awt.Point
 
 //import org.nlogo.lite.InterfaceComponent
 import agent.simulation.graphical.netlogo.util.InterfaceComponent
+import org.nlogo.lite.InterfaceComponent.InvocationListener
 import org.nlogo.core.CompilerException
 import org.nlogo.api.LogoException
 
@@ -45,6 +46,19 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
       case logoException: LogoException => throw logoException
     }
   }
+
+  /**
+    Report by using handler to catch either the result or the error
+  */
+  final def reportAndCallback(code: String, 
+   resultHandler:(AnyRef)=> Unit,
+   errorHandler: (CompilerException)=> Unit = (errorHandler) => { errorHandler.printStackTrace}
+   ) = {
+    comp.reportAndCallback(code,  new InvocationListener(){
+      def handleResult(value: AnyRef) = resultHandler(value)
+      def handleError(compilerException: CompilerException) = errorHandler(compilerException)
+    })
+  } 
   
   def runNetlogo = {
     wait {
@@ -95,7 +109,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
        NetlogoAgent.this.setup
        comp.listenerManager.addListener(new NetlogoSimpleListener{
          override def tickCounterChanged(ticks: Double) = {
-           if(tick < maxTicks)
+           if( tick < maxTicks)
            {
              tick = ticks.toInt
              check
