@@ -26,6 +26,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   protected  val frame = new javax.swing.JFrame 
   frame.addWindowListener(new java.awt.event.WindowAdapter {
     override def windowClosing(e: java.awt.event.WindowEvent) = {
+      import context.dispatcher
       context.parent ! agent.Finished
     }
   })
