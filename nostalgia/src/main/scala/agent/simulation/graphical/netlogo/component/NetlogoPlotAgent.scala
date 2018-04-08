@@ -45,6 +45,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
   
   def setup = {}
   def check = {}
+
   def variablesPlot = {
     var varStr = ""
     variables.foreach{ varStr+= _+" "}
@@ -75,7 +76,7 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
       cmd("repeat "+maxTicks+" [ go ]")
   }
     
-    def modelPlot = {s"""
+  def modelPlot = {s"""
 globals [ ${variablesPlot}]
 
 to setup

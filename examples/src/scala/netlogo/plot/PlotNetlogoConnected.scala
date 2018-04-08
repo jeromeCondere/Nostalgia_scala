@@ -6,20 +6,22 @@ import agent.simulation.graphical._
 import agent._
 import scala.io.StdIn
 
-class myPlotConnectedAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)(120)(15) with Simple {
-  addPlotPens(PlotPen("plot a"))
+class myPlotConnectedAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)(18000000)(2) with Simple {
+  addPlotPens(PlotPen("plot a * 0.2"))
   addPlotVariables("a")
-  
+  println(modelPlot)
+  var ui = 0
   override  def receive = {
     case Run => run
-    case a: Double => cmd("set a "+a)
+    case a: Double => cmd("set a "+a); println("ticks_plot: "+ ui)
     case _ => 
   }
   
   override def setup = {}
+  override def check = {}
 
 }
-class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(400)(15) with Simple {
+class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(42)(3) with Simple {
  var netlogo_actor: ActorRef = _
  
   def receive = {
@@ -27,8 +29,10 @@ class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoMo
     case a: ActorRef => netlogo_actor = a
     case _ => 
   }
-
+  var ui = 0
   override def check = {
+    println("ticks_net: "+ ui)
+    ui += 1
     val source = "count patches with [pcolor = pink]"
     reportAndCallback(source, (altruists: AnyRef) => {
       netlogo_actor ! altruists.asInstanceOf[Double]
