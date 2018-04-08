@@ -58,11 +58,6 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
     }
     pensStr
   }
-  private def  variablesSetup = {
-    var res = ""
-    variables.foreach(res+= "set "+ _ +" 0.0\n")
-    res
-  }
 
   private def stringOrNil(s: String) = if(s.isEmpty) "NIL" else s
 
@@ -85,7 +80,6 @@ globals [ ${variablesPlot}]
 
 to setup
  clear-all
- $variablesSetup
  reset-ticks
 end
 
