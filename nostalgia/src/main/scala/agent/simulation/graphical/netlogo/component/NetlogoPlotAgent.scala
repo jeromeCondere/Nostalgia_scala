@@ -47,15 +47,21 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
   def check = {}
   def variablesPlot = {
     var varStr = ""
-    variables.foreach{v => varStr += v+" "}
+    variables.foreach{ varStr+= _+" "}
     varStr
   }
+
   def pensPlot = {
     var pensStr = ""
     pens.zipWithIndex.foreach{
       case(p,i) => pensStr += s""""${plotModel.name+"_pen"+i}" 1.0 0 -16777216 false "" "${p.updateCommand}"\n"""
     }
     pensStr
+  }
+  private def  variablesSetup = {
+    var res = ""
+    variables.foreach(res+= "set "+ _ +" 0.0\n")
+    res
   }
 
   private def stringOrNil(s: String) = if(s.isEmpty) "NIL" else s
@@ -79,8 +85,10 @@ globals [ ${variablesPlot}]
 
 to setup
  clear-all
+ $variablesSetup
  reset-ticks
 end
+
 to go
  tick
 end
@@ -90,9 +98,9 @@ GRAPHICS-WINDOW
 9000
 9200
 9200
-16
-1
-5.7
+-1
+-1
+13.0
 1
 10
 1
@@ -104,10 +112,10 @@ GRAPHICS-WINDOW
 1
 -16
 16
--1
+-16
+16
 1
-0
-0
+1
 1
 ticks
 $fps
