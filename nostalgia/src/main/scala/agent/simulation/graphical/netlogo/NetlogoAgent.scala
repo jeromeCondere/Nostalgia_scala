@@ -53,7 +53,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   */
   final def reportAndCallback(code: String, 
    resultHandler:(AnyRef)=> Unit,
-   errorHandler: (CompilerException)=> Unit = (errorHandler) => { errorHandler.printStackTrace}
+   errorHandler: (CompilerException)=> Unit = (errorHandler) => errorHandler.printStackTrace
    ) = {
     comp.reportAndCallback(code,  new InvocationListener(){
       def handleResult(value: AnyRef) = resultHandler(value)
@@ -78,7 +78,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
       new Runnable() { def run() { block } } 
     ) 
   }
-  
+
   /**Runs the netlogo model*/
   final def run = {
    val eps = 5
