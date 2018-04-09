@@ -80,11 +80,12 @@ class NetlogoPlotAgent (plotModel: PlotModel)(maxTicks:Int = NC.DEFAULT_MAX_TICK
 globals [ ${variablesPlot}]
 
 to setup
- clear-all
+ ca
  reset-ticks
 end
 
 to go
+ wait ${1.0f/fps}
  tick
 end
 @#$$#@#$$#@
