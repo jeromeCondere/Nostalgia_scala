@@ -8,7 +8,7 @@ import agent._
 import akka.actor._
 import akka.testkit._
 import scala.concurrent.duration._
-import scala.concurrent.Future;
+import scala.concurrent.Future
 import agent.port.PortDevice
 import agent.port.SimpleDevice
 import agent.port.Out

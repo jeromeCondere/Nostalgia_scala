@@ -26,3 +26,8 @@ Find why the behavior agent inside NetlogoAgent doesn't send agent.Finished to t
 ### Example
 
 Implement the personalized sort
+
+### Wiki
+- What is a nostalgia agent
+- How it works
+- Wiki for examples (problem description etc.)

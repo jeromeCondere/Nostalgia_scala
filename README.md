@@ -1,19 +1,14 @@
 ## What is Nostalgia ?
 
-Nostalgia is a project that provides tools in order to program MAS which means multi agent system, MAS are often used in distributed 
-artificial intelligence system or distributed computing system.  
-Indeed an MAS is a platform that provides tools for asynchronous communication, the atoms of such systems are called 
-agents and it is very important to give a definition of this concept. An agent is a computional entity that is
-autonomous and that interacts with its environment which can be the OS or other agents or even physical environnement
-. In that case we can call them autonomous sensor.  
+Nostalgia is a project that provides tools in order to program **MAS** (Multi-Agent System), MAS are often used in distributed artificial intelligence system or distributed computing system.  
+Indeed an MAS is a platform that provides tools for asynchronous communication, the atoms of such systems are called agents and it is very important to give a definition of this concept. An agent is a computional entity that is autonomous and that interacts with its environment which can be the OS or other agents or even physical environnement. In that case we can call them autonomous sensor.  
 We use *akka*  which is framework implemented in scala that helps us to implement a MAS for the Nostalgia project.
 
 ### the main goal
 
 The main goal of Nostalgia is to provide tools for multi modeling in order to develop multi modeling systems easier.
-Multi modeling can be very useful because it consists in letting several agents called model agents interact. They run programs
-called models in order to simulate collective phenomena. The main purpose of creating multi modeling systems is to study
-the influence of a set of models over one or several models.  
+Multi modeling can be very useful because it consists in letting several agents called model agents interact. They run programs called models in order to simulate collective phenomena. 
+The main purpose of creating multi modeling systems is to study the influence of a set of models over one or several models.  
 Nostalgia use is specialized on multi modeling based on *Netlogo* (https://ccl.northwestern.edu/netlogo/)
 
 ### other goal
@@ -23,3 +18,7 @@ neural networks.
 
 ## future work
 Developping tools for data farming
+
+### Netlogo version
+Unfortunatly netlogo doesn't provide jars for a Maven or sbt configuration. That means we have to provide the Netlogo jar in the lib/ folder in order for the project to work.  
+The project currently works with the 6.02 version.

@@ -52,8 +52,8 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
     Report by using handler to catch either the result or the error
   */
   final def reportAndCallback(code: String, 
-   resultHandler:(AnyRef)=> Unit,
-   errorHandler: (CompilerException)=> Unit = (errorHandler) => errorHandler.printStackTrace
+   resultHandler: (AnyRef) => Unit,
+   errorHandler: (CompilerException) => Unit = (errorHandler) => errorHandler.printStackTrace
    ) = {
     comp.reportAndCallback(code,  new InvocationListener(){
       def handleResult(value: AnyRef) = resultHandler(value)
