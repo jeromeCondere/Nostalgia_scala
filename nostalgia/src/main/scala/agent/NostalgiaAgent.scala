@@ -2,7 +2,7 @@ package agent
 import akka.actor.Actor
 import akka.actor.ActorRef
 import scala.reflect.ClassTag 
-import scala.concurrent.Future;
+import scala.concurrent.Future
 
 abstract class NostalgiaAgent extends Actor {
   /**Move the agent on another place on the network and return the ref

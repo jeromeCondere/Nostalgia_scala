@@ -4,7 +4,7 @@ import akka.actor.Props
 import akka.actor.ActorRef
 import scala.concurrent.duration._
 import akka.util.Timeout
-import scala.concurrent.Future;
+import scala.concurrent.Future
 import scala.util.{Success, Failure}
 import akka.pattern.pipe
 import agent.collection._

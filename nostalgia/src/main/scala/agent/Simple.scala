@@ -1,5 +1,5 @@
 package agent
-import scala.concurrent.Future;
+import scala.concurrent.Future
 import akka.actor._
 
 trait Simple extends NostalgiaAgent {

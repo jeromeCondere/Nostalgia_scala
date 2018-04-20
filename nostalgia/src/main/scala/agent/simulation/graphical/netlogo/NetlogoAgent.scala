@@ -12,7 +12,7 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import akka.pattern.ask
 import akka.util.Timeout
-import scala.concurrent._;
+import scala.concurrent._
 import scala.util.{Success, Failure}
 import java.awt.Point
 
@@ -34,6 +34,8 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   
   protected  val comp = new InterfaceComponent(frame)
 
+  /**Call when the closing windows event has been triggered*/
+  def onClosingWindows = {}
   final def cmd(source: String) = comp.command(source)
   final def cmdLater(source: String) = comp.commandLater(source)
   
