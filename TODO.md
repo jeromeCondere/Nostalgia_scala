@@ -11,9 +11,8 @@ Must add FSM behavior class that inherit the base class *NostalgiaAgent*
 
 ### Netlogo
 
-Add a file that contains all default params for the component (slider, button, switch, etc.)
-Add fonction that generates parts of .nlogo file (slider, button, switch, etc.)
-Find why the behavior agent inside NetlogoAgent doesn't send agent.Finished to the NetlogoAgent (dead letters)
+- Add fonction that generates parts of .nlogo file (slider, button, switch, etc.)
+- Find why the behavior agent inside NetlogoAgent doesn't send agent.Finished to the NetlogoAgent (dead letters)
 
 ### Collections Agents
 - Add Array and TreeAgent (more difficult)  
