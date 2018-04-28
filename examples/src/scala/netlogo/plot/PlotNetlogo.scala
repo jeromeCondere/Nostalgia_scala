@@ -6,7 +6,7 @@ import agent.simulation.graphical._
 import agent._
 import scala.io.StdIn
 
-class myPlotAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)()() with Simple {
+class myPlotAgent(plotModel: PlotModel) extends NetlogoPlotAgent(plotModel)(30)(3000) with Simple {
   
   override def setup = {}
   

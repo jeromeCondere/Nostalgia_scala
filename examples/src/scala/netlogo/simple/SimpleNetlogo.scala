@@ -5,7 +5,7 @@ import agent.simulation.graphical._
 import agent.Simple
 import scala.io.StdIn
 
-class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(1000)(30) with Simple {
+class myNetlogoAgent(netlogoModel : NetlogoModel) extends NetlogoAgent(netlogoModel)(200)(30) with Simple {
   def receive = {
     case "run" => run
     case _ => 

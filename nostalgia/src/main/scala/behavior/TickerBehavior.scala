@@ -51,6 +51,6 @@ class TickerBehavior (period:FiniteDuration)(toRun:() => Unit) extends ComplexBe
 }
 
 object TickerBehavior {
-  def apply(delay:FiniteDuration)(toRun: =>Unit) = new TickerBehavior(delay)(()=> toRun)
-  def props(delay:FiniteDuration)(toRun: =>Unit): Props = Props(TickerBehavior(delay)(toRun))
+  def apply(delay: FiniteDuration)(toRun: => Unit) = new TickerBehavior(delay)(()=> toRun)
+  def props(delay: FiniteDuration)(toRun: => Unit): Props = Props(TickerBehavior(delay)(toRun))
 }

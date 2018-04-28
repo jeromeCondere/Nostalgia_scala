@@ -4,14 +4,11 @@ import agent.behavioral.BehaviorAgent
 import agent.behavioral.Setup
 import agent.Simple
 import behavior.OneShotBehavior
-import behavior.TickerBehavior
-import behavior.ParralelBehavior
+import behavior.TimerBehavior
 import behavior.proxy.BehaviorProxy
 import scala.concurrent.duration._
-import akka.actor.ActorRef
-import akka.actor.Props
+import akka.actor.{ActorRef, Actor, Props}
 import akka.pattern.ask
-import akka.util.Timeout
 import scala.concurrent._
 import scala.util.{Success, Failure}
 import java.awt.Point
@@ -22,12 +19,23 @@ import org.nlogo.lite.InterfaceComponent.InvocationListener
 import org.nlogo.core.CompilerException
 import org.nlogo.api.LogoException
 
-/**A class used to create a classic netlogoAgent that run the model .nlogo file*/
+/**Object sent from the runner when maxTicks has been reached*/
+case object MaxTicksFinished
+
+/**
+ * A class used to create a classic netlogoAgent that run the model .nlogo file
+ * 
+ * @constructor 
+ * @param netlogoModel the model used to run the agent
+ * @param maxTicks the limit of ticks until a MaxTicksFinished is sent from the runner (if 0 then no limit)
+ * @param fps frames per second 
+ */
 abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = NetlogoConstants.DEFAULT_MAX_TICKS)(val fps: Float = NetlogoConstants.DEFAULT_FPS) extends GraphicalAgent(netlogoModel) {
   protected  val frame = new javax.swing.JFrame 
   frame.addWindowListener(new java.awt.event.WindowAdapter {
     override def windowClosing(e: java.awt.event.WindowEvent) = {
       import context.dispatcher
+      onClosingWindows
       context.parent ! agent.Finished
     }
   })
@@ -72,7 +80,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
       comp.open(netlogoModel.path)
     }
      cmd("setup")
-     cmd("repeat "+maxTicks+" [ go ]")
+     cmd(s"repeat $maxTicks [ go ]")
   }
   
   final def wait(block: => Unit) {
@@ -83,19 +91,7 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
 
   /**Runs the netlogo model*/
   final def run = {
-   val eps = 5
-   implicit val timeout = Timeout((maxTicks + eps)/fps seconds)
-   import context.dispatcher
-   
-   val behaviorAgent = context.actorOf(Props(new NostalgiaBehaviorAgent()))
-   behaviorAgent ! Setup
-
-   val futureFinished = (behaviorAgent ? agent.Run).mapTo[agent.Finished.type]
-   futureFinished onComplete {
-    case Success(v) => context.parent ! agent.Finished
-                       
-    case Failure(e) => println(e.getMessage)
-   }
+   val runner = context.actorOf(Props(new NetlogoRunnerActor()))
   }
   
   /**setup function before running the netlogo model*/
@@ -108,23 +104,39 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
   // a netlogo agent uses a behavior agent in order to run both runNetlogo and check
   class NostalgiaBehaviorAgent extends BehaviorAgent with Simple {
     var tick = 0
+    val eps = 5
+    val timeout = (maxTicks + eps)/fps seconds
 
-      addBehavior(BehaviorProxy(OneShotBehavior{
-       NetlogoAgent.this.setup
-       comp.listenerManager.addListener(new NetlogoSimpleListener{
-         override def tickCounterChanged(ticks: Double) = {
-           if( tick < maxTicks)
-           {
-             tick = ticks.toInt
-             check
-           }
+    addBehavior(BehaviorProxy(OneShotBehavior{
+     NetlogoAgent.this.setup
+     comp.listenerManager.addListener(new NetlogoSimpleListener{
+       override def tickCounterChanged(ticks: Double) = {
+         if( tick < maxTicks) {
+           tick = ticks.toInt
+           check
          }
-       })
-      }))
+       }
+     })
+    }))
+    
+    addBehavior(BehaviorProxy(OneShotBehavior{
+      runNetlogo
+    }))
+  }
 
-      addBehavior(BehaviorProxy(OneShotBehavior{
-        runNetlogo
-      }))
+  //This class is used to avoid managing agent.Finished in the NetlogoAgent receive method
+  class NetlogoRunnerActor extends Actor {
+   val eps = 5
+   
+   val behaviorAgent = context.actorOf(Props(new NostalgiaBehaviorAgent()))
+   behaviorAgent ! Setup
+
+   val futureFinished = behaviorAgent ! agent.Run
+
+   def receive = {
+    case agent.Finished => 
+    case MaxTicksFinished => 
    }
-  
+
+  }
 }
