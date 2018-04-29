@@ -2,6 +2,7 @@ package agent.simulation.graphical.netlogo
 import agent.simulation.graphical.GraphicalAgent
 import agent.behavioral.BehaviorAgent
 import agent.behavioral.Setup
+import agent.{Run, Simple, Finished}
 import agent.Simple
 import behavior.OneShotBehavior
 import behavior.TimerBehavior
@@ -36,11 +37,12 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
     override def windowClosing(e: java.awt.event.WindowEvent) = {
       import context.dispatcher
       onClosingWindows
-      context.parent ! agent.Finished
+      context.parent ! Finished
     }
   })
   
   protected  val comp = new InterfaceComponent(frame)
+  protected val runner = context.actorOf(Props(new NetlogoRunnerActor()),s"runner_${self.path.name}")
 
   /**Call when the closing windows event has been triggered*/
   def onClosingWindows = {}
@@ -79,8 +81,8 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
       frame.setVisible(true)
       comp.open(netlogoModel.path)
     }
-     cmd("setup")
-     cmd(s"repeat $maxTicks [ go ]")
+    cmd("setup")
+    cmd(s"repeat $maxTicks [ go ]")
   }
   
   final def wait(block: => Unit) {
@@ -91,32 +93,29 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
 
   /**Runs the netlogo model*/
   final def run = {
-   val runner = context.actorOf(Props(new NetlogoRunnerActor()))
+    runner ! Run
   }
   
   /**setup function before running the netlogo model*/
   def setup
   
-  /**function called whenever the netlogo ticks
-   * */
+  /**function called whenever the netlogo ticks*/
   def check
   
-  // a netlogo agent uses a behavior agent in order to run both runNetlogo and check
-  class NostalgiaBehaviorAgent extends BehaviorAgent with Simple {
+  //A netlogo agent uses a behavior agent in order to run both runNetlogo and check
+  class NetlogoBehaviorAgent extends BehaviorAgent with Simple {
     var tick = 0
-    val eps = 5
-    val timeout = (maxTicks + eps)/fps seconds
 
     addBehavior(BehaviorProxy(OneShotBehavior{
-     NetlogoAgent.this.setup
-     comp.listenerManager.addListener(new NetlogoSimpleListener{
-       override def tickCounterChanged(ticks: Double) = {
-         if( tick < maxTicks) {
-           tick = ticks.toInt
-           check
-         }
-       }
-     })
+      NetlogoAgent.this.setup
+      comp.listenerManager.addListener(new NetlogoSimpleListener{
+        override def tickCounterChanged(ticks: Double) = {
+          if(tick < maxTicks) {
+            tick = ticks.toInt
+            check
+          }
+        }
+      })
     }))
     
     addBehavior(BehaviorProxy(OneShotBehavior{
@@ -124,19 +123,13 @@ abstract class NetlogoAgent(netlogoModel : NetlogoModel)(val maxTicks:Int = Netl
     }))
   }
 
-  //This class is used to avoid managing agent.Finished in the NetlogoAgent receive method
+  //This class is used to avoid managing Finished in the NetlogoAgent receive method
   class NetlogoRunnerActor extends Actor {
-   val eps = 5
-   
-   val behaviorAgent = context.actorOf(Props(new NostalgiaBehaviorAgent()))
-   behaviorAgent ! Setup
-
-   val futureFinished = behaviorAgent ! agent.Run
-
-   def receive = {
-    case agent.Finished => 
-    case MaxTicksFinished => 
-   }
-
+    val behaviorAgent = context.actorOf(Props(new NetlogoBehaviorAgent()))
+    behaviorAgent ! Setup
+    def receive = {
+      case Run => behaviorAgent ! Run
+      case Finished => context.parent ! MaxTicksFinished
+    }
   }
 }
